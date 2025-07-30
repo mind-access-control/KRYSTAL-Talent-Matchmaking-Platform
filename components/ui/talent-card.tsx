@@ -27,7 +27,7 @@ export function TalentCard({ talent, showMatchScore = false, viewUrl }: TalentCa
       <CardHeader className="pb-3">
         <div className="flex items-start space-x-4">
           <img
-            src={talent.avatar || "/placeholder.svg"}
+            src={talent.avatar || "/placeholder-user.jpg"}
             alt={talent.name}
             className="w-16 h-16 rounded-full object-cover"
           />

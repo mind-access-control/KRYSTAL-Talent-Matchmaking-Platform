@@ -12,6 +12,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "KRYSTAL - AI-Powered Talent Matchmaking Platform",
   description: "Discover your next star. Unleash your potential with AI-powered talent matching.",
+  icons: { icon: "/placeholder-logo.svg" },
     generator: 'v0.dev'
 }
 

@@ -1,23 +1,29 @@
-"use client"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Moon, Sun, Globe, User, LogOut } from "lucide-react"
-import { useTheme } from "@/contexts/theme-context"
-import { useLanguage } from "@/contexts/language-context"
-import { useAuth } from "@/contexts/auth-context"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+"use client";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Moon, Sun, Globe, User, LogOut } from "lucide-react";
+import { useTheme } from "@/contexts/theme-context";
+import { useLanguage } from "@/contexts/language-context";
+import { useAuth } from "@/contexts/auth-context";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export function Header() {
-  const { theme, toggleTheme } = useTheme()
-  const { language, setLanguage, t } = useLanguage()
-  const { user, logout } = useAuth()
-  const router = useRouter()
+  const { theme, toggleTheme } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
+  const { user, logout } = useAuth();
+  const router = useRouter();
 
   const handleLogout = () => {
-    logout()
-    router.push("/")
-  }
+    logout();
+    router.push("/");
+  };
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -38,26 +44,47 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setLanguage("en")}>English</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLanguage("es")}>Español</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLanguage("en")}>
+                English
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLanguage("es")}>
+                Español
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
           {/* Theme Toggle */}
           <Button variant="ghost" size="sm" onClick={toggleTheme}>
-            {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+            {theme === "light" ? (
+              <Moon className="h-4 w-4" />
+            ) : (
+              <Sun className="h-4 w-4" />
+            )}
           </Button>
 
           {/* User Menu or Auth Buttons */}
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                  <img
-                    src={user.avatar || "/placeholder.svg?height=32&width=32&query=user"}
-                    alt={user.name}
-                    className="w-6 h-6 rounded-full"
-                  />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center space-x-2"
+                >
+                  <Avatar className="w-6 h-6">
+                    {user.avatar ? (
+                      <AvatarImage src={user.avatar} alt={user.name} />
+                    ) : null}
+                    <AvatarFallback>
+                      {user.name
+                        ? user.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                            .toUpperCase()
+                        : "?"}
+                    </AvatarFallback>
+                  </Avatar>
                   <span className="hidden md:inline">{user.name}</span>
                 </Button>
               </DropdownMenuTrigger>
@@ -69,7 +96,9 @@ export function Header() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href={`/${user.type}/settings`}>{t("nav.settings")}</Link>
+                  <Link href={`/${user.type}/settings`}>
+                    {t("nav.settings")}
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
@@ -90,5 +119,5 @@ export function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }

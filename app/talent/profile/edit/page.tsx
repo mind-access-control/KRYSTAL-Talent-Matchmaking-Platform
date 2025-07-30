@@ -115,7 +115,7 @@ export default function TalentProfileEdit() {
               <div className="flex flex-col items-center space-y-4 pb-6 border-b">
                 <div className="relative">
                   <img
-                    src={avatarPreview || "/placeholder.svg?height=120&width=120&query=profile"}
+                    src={avatarPreview || "/placeholder-user.jpg"}
                     alt="Profile"
                     className="w-24 h-24 rounded-full object-cover border-4 border-muted"
                   />

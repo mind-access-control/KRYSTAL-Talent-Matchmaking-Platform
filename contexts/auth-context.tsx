@@ -1,117 +1,232 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { createContext, useContext, useState, useEffect } from "react"
+import type React from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
-interface User {
-  id: string
-  email: string
-  name: string
-  type: "talent" | "business" | "admin"
-  avatar?: string
+interface Profile {
+  id: string;
+  email: string;
+  full_name: string | null;
+  avatar_url: string | null;
+  user_type: "talent" | "business" | "admin";
+  company_name: string | null;
+  company_logo_url: string | null;
+  bio: string | null;
+  skills: string[] | null;
+  location: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+  type: "talent" | "business" | "admin";
+  avatar: string | null;
 }
 
 interface AuthContextType {
-  user: User | null
-  login: (email: string, password: string, type: "talent" | "business") => Promise<void>
-  register: (email: string, password: string, type: "talent" | "business") => Promise<void>
-  logout: () => void
-  loading: boolean
+  user: AuthUser | null;
+  profile: Profile | null;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, metadata: any) => Promise<void>;
+  logout: () => void;
+  updateProfile: (updates: Partial<Profile>) => Promise<{ error: any }>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
-// Mock users for demo
-const mockUsers = [
+// Demo users data
+const DEMO_USERS = [
   {
-    id: "1",
-    email: "talent@demo.com",
-    password: "demo123",
-    name: "Sofia Rodriguez",
-    type: "talent" as const,
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
-  {
-    id: "2",
-    email: "business@demo.com",
-    password: "demo123",
-    name: "Creative Agency",
-    type: "business" as const,
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
-  {
-    id: "3",
-    email: "admin@demo.com",
-    password: "demo123",
+    id: "demo-admin-1",
+    email: "admin@krystal.com",
+    password: "admin123",
     name: "Admin User",
     type: "admin" as const,
     avatar: "/placeholder.svg?height=40&width=40",
+    profile: {
+      id: "demo-admin-1",
+      email: "admin@krystal.com",
+      full_name: "Admin User",
+      avatar_url: "/placeholder.svg?height=40&width=40",
+      user_type: "admin" as const,
+      company_name: null,
+      company_logo_url: null,
+      bio: "System Administrator",
+      skills: null,
+      location: "New York, NY",
+      created_at: "2024-01-01T00:00:00Z",
+      updated_at: "2024-01-01T00:00:00Z",
+    },
   },
-]
+  {
+    id: "demo-business-1",
+    email: "business@example.com",
+    password: "business123",
+    name: "Sarah Johnson",
+    type: "business" as const,
+    avatar: "/placeholder.svg?height=40&width=40",
+    profile: {
+      id: "demo-business-1",
+      email: "business@example.com",
+      full_name: "Sarah Johnson",
+      avatar_url: "/placeholder.svg?height=40&width=40",
+      user_type: "business" as const,
+      company_name: "Creative Studios Inc",
+      company_logo_url: "/placeholder.svg?height=60&width=60",
+      bio: "Creative Director at Creative Studios Inc. Passionate about finding the perfect talent for our campaigns.",
+      skills: null,
+      location: "Los Angeles, CA",
+      created_at: "2024-01-01T00:00:00Z",
+      updated_at: "2024-01-01T00:00:00Z",
+    },
+  },
+  {
+    id: "demo-talent-1",
+    email: "talent@example.com",
+    password: "talent123",
+    name: "Emma Rodriguez",
+    type: "talent" as const,
+    avatar: "/placeholder.svg?height=40&width=40",
+    profile: {
+      id: "demo-talent-1",
+      email: "talent@example.com",
+      full_name: "Emma Rodriguez",
+      avatar_url: "/placeholder.svg?height=40&width=40",
+      user_type: "talent" as const,
+      company_name: null,
+      company_logo_url: null,
+      bio: "Professional model and content creator with 5+ years of experience in fashion and lifestyle photography.",
+      skills: [
+        "Fashion Modeling",
+        "Content Creation",
+        "Photography",
+        "Social Media",
+      ],
+      location: "Miami, FL",
+      created_at: "2024-01-01T00:00:00Z",
+      updated_at: "2024-01-01T00:00:00Z",
+    },
+  },
+];
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Check for stored user session
-    const storedUser = localStorage.getItem("krystal_user")
+    const storedUser = localStorage.getItem("demo-user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser))
+      const userData = JSON.parse(storedUser);
+      const demoUser = DEMO_USERS.find((u) => u.id === userData.id);
+      if (demoUser) {
+        setUser({
+          id: demoUser.id,
+          email: demoUser.email,
+          name: demoUser.name,
+          type: demoUser.type,
+          avatar: demoUser.avatar,
+        });
+        setProfile(demoUser.profile);
+      }
     }
-    setLoading(false)
-  }, [])
+    setLoading(false);
+  }, []);
 
-  const login = async (email: string, password: string, type: "talent" | "business") => {
-    setLoading(true)
+  const login = async (email: string, password: string) => {
+    const demoUser = DEMO_USERS.find(
+      (u) => u.email === email && u.password === password
+    );
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    const foundUser = mockUsers.find((u) => u.email === email && u.password === password && u.type === type)
-
-    if (foundUser) {
-      const { password: _, ...userWithoutPassword } = foundUser
-      setUser(userWithoutPassword)
-      localStorage.setItem("krystal_user", JSON.stringify(userWithoutPassword))
-    } else {
-      throw new Error("Invalid credentials")
+    if (!demoUser) {
+      throw new Error("Invalid credentials. Try one of the demo accounts.");
     }
 
-    setLoading(false)
-  }
+    const authUser = {
+      id: demoUser.id,
+      email: demoUser.email,
+      name: demoUser.name,
+      type: demoUser.type,
+      avatar: demoUser.avatar,
+    };
 
-  const register = async (email: string, password: string, type: "talent" | "business") => {
-    setLoading(true)
+    setUser(authUser);
+    setProfile(demoUser.profile);
+    localStorage.setItem("demo-user", JSON.stringify(authUser));
+  };
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
+  const register = async (email: string, password: string, metadata: any) => {
+    // For demo purposes, create a new user
+    const newId = `demo-${metadata.user_type}-${Date.now()}`;
     const newUser = {
-      id: Date.now().toString(),
+      id: newId,
       email,
-      name: type === "talent" ? "New Talent" : "New Business",
-      type,
-      avatar: `/placeholder.svg?height=40&width=40&query=${type}`,
-    }
+      name: metadata.full_name,
+      type: metadata.user_type,
+      avatar: `/placeholder.svg?height=40&width=40&query=${metadata.user_type}`,
+    };
 
-    setUser(newUser)
-    localStorage.setItem("krystal_user", JSON.stringify(newUser))
-    setLoading(false)
-  }
+    const newProfile: Profile = {
+      id: newId,
+      email,
+      full_name: metadata.full_name,
+      avatar_url: `/placeholder.svg?height=40&width=40&query=${metadata.user_type}`,
+      user_type: metadata.user_type,
+      company_name: metadata.company_name || null,
+      company_logo_url: null,
+      bio: null,
+      skills: null,
+      location: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    setUser(newUser);
+    setProfile(newProfile);
+    localStorage.setItem("demo-user", JSON.stringify(newUser));
+  };
 
   const logout = () => {
-    setUser(null)
-    localStorage.removeItem("krystal_user")
-  }
+    setUser(null);
+    setProfile(null);
+    localStorage.removeItem("demo-user");
+  };
 
-  return <AuthContext.Provider value={{ user, login, register, logout, loading }}>{children}</AuthContext.Provider>
+  const updateProfile = async (updates: Partial<Profile>) => {
+    if (!profile) return { error: "No user logged in" };
+
+    const updatedProfile = {
+      ...profile,
+      ...updates,
+      updated_at: new Date().toISOString(),
+    };
+
+    setProfile(updatedProfile);
+    return { error: null };
+  };
+
+  const value = {
+    user,
+    profile,
+    loading,
+    login,
+    register,
+    logout,
+    updateProfile,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider")
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-  return context
+  return context;
 }

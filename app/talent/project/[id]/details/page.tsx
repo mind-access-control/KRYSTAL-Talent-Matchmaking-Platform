@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import { ChatDialog } from "@/components/ui/chat-dialog";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export default function ProjectDetails() {
   const { showToast } = useToast();
@@ -34,7 +35,7 @@ export default function ProjectDetails() {
     id: projectId,
     title: "Summer Fashion Campaign",
     company: "StyleCo Fashion",
-    companyLogo: "/placeholder.svg?height=80&width=80",
+    companyLogo: undefined, // Sin logo por defecto
     description:
       "We're looking for fashion models for our summer collection campaign. This is an exciting opportunity to work with a leading fashion brand and showcase our new line to a global audience. The campaign will feature both studio and outdoor shoots in Los Angeles.",
     budget: "$5,000",
@@ -149,11 +150,24 @@ export default function ProjectDetails() {
             <Card>
               <CardHeader>
                 <div className="flex items-start space-x-4">
-                  <img
-                    src={project.companyLogo || "/placeholder.svg"}
-                    alt={project.company}
-                    className="w-20 h-20 rounded-lg object-cover border shadow-sm"
-                  />
+                  <Avatar className="w-20 h-20 border shadow-sm" square>
+                    {project.companyLogo ? (
+                      <AvatarImage
+                        src={project.companyLogo}
+                        alt={project.company}
+                        className="object-cover"
+                      />
+                    ) : null}
+                    <AvatarFallback square style={{ fontSize: 32 }}>
+                      {project.company
+                        ? project.company
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                            .toUpperCase()
+                        : "?"}
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="flex-1">
                     <h1 className="text-2xl font-bold mb-2">{project.title}</h1>
                     <p className="text-lg text-muted-foreground mb-2">
@@ -322,11 +336,23 @@ export default function ProjectDetails() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center">
-                  <img
-                    src={project.companyLogo || "/placeholder.svg"}
-                    alt={project.companyInfo.name}
-                    className="w-8 h-8 rounded mr-2"
-                  />
+                  <Avatar className="w-8 h-8 mr-2" square>
+                    {project.companyLogo ? (
+                      <AvatarImage
+                        src={project.companyLogo}
+                        alt={project.companyInfo.name}
+                      />
+                    ) : null}
+                    <AvatarFallback square>
+                      {project.companyInfo.name
+                        ? project.companyInfo.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                            .toUpperCase()
+                        : "?"}
+                    </AvatarFallback>
+                  </Avatar>
                   About {project.companyInfo.name}
                 </CardTitle>
               </CardHeader>

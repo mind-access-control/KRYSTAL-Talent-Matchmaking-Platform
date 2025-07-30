@@ -1,14 +1,23 @@
-"use client"
-import { DashboardLayout } from "@/components/layout/dashboard-layout"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { MapPin, Users, TrendingUp, Star, MessageSquare, Heart, Share2, Calendar } from "lucide-react"
-import { useToast } from "@/components/ui/toast"
+"use client";
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import {
+  MapPin,
+  Users,
+  TrendingUp,
+  Star,
+  MessageSquare,
+  Heart,
+  Share2,
+  Calendar,
+} from "lucide-react";
+import { useToast } from "@/components/ui/toast";
 
 export default function TalentProfile({ params }: { params: { id: string } }) {
-  const { showToast } = useToast()
+  const { showToast } = useToast();
 
   // Mock talent data based on ID
   const talent = {
@@ -19,7 +28,14 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
     avatar: "/placeholder.svg?height=200&width=200",
     bio: "Professional fashion model with 5+ years of experience in commercial and editorial photography. I specialize in lifestyle and beauty campaigns, bringing authenticity and creativity to every project. My passion for sustainable fashion and diverse representation drives my work in the industry.",
     matchScore: 95,
-    skills: ["Fashion Photography", "Commercial Modeling", "Editorial", "Beauty", "Lifestyle", "Runway"],
+    skills: [
+      "Fashion Photography",
+      "Commercial Modeling",
+      "Editorial",
+      "Beauty",
+      "Lifestyle",
+      "Runway",
+    ],
     languages: ["English", "Spanish", "French"],
     rates: 500,
     availability: "Available weekdays and weekends",
@@ -82,15 +98,15 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
         rating: 5,
       },
     ],
-  }
+  };
 
   const handleContact = () => {
-    showToast("Message sent to Sofia Rodriguez!", "success")
-  }
+    showToast("Message sent to Sofia Rodriguez!", "success");
+  };
 
   const handleSaveToFavorites = () => {
-    showToast("Added to favorites!", "success")
-  }
+    showToast("Added to favorites!", "success");
+  };
 
   return (
     <DashboardLayout>
@@ -100,16 +116,21 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
           <CardContent className="pt-6">
             <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
               <div className="text-center">
-                <div className="text-4xl font-bold text-green-600 mb-1">{talent.matchScore}%</div>
+                <div className="text-4xl font-bold text-green-600 mb-1">
+                  {talent.matchScore}%
+                </div>
                 <div className="text-sm text-muted-foreground">Match Score</div>
-                <div className="text-xs text-green-600 font-medium mt-1">Excellent Match</div>
+                <div className="text-xs text-green-600 font-medium mt-1">
+                  Excellent Match
+                </div>
               </div>
               <div className="flex-1">
                 <h2 className="text-lg font-semibold mb-2">Why this match?</h2>
                 <p className="text-sm text-muted-foreground">
-                  Sofia's fashion modeling expertise, strong social media presence, and Los Angeles location make her an
-                  ideal candidate for your Summer Fashion Campaign. Her portfolio demonstrates experience with similar
-                  lifestyle and beauty projects.
+                  Sofia's fashion modeling expertise, strong social media
+                  presence, and Los Angeles location make her an ideal candidate
+                  for your Summer Fashion Campaign. Her portfolio demonstrates
+                  experience with similar lifestyle and beauty projects.
                 </p>
               </div>
             </div>
@@ -123,12 +144,14 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
               <CardContent className="pt-6">
                 <div className="text-center">
                   <img
-                    src={talent.avatar || "/placeholder.svg"}
+                    src={talent.avatar || "/placeholder-user.jpg"}
                     alt={talent.name}
                     className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
                   />
                   <h1 className="text-2xl font-bold mb-1">{talent.name}</h1>
-                  <p className="text-muted-foreground mb-2">{talent.category}</p>
+                  <p className="text-muted-foreground mb-2">
+                    {talent.category}
+                  </p>
                   <div className="flex items-center justify-center text-sm text-muted-foreground mb-4">
                     <MapPin className="w-4 h-4 mr-1" />
                     {talent.location}
@@ -151,7 +174,9 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
                     <div className="flex items-center justify-center space-x-1">
                       <Star className="w-4 h-4 text-yellow-500 fill-current" />
                       <span className="font-medium">4.9</span>
-                      <span className="text-sm text-muted-foreground">(24 reviews)</span>
+                      <span className="text-sm text-muted-foreground">
+                        (24 reviews)
+                      </span>
                     </div>
                     <div className="text-sm">
                       <span className="font-medium">${talent.rates}</span>
@@ -177,7 +202,11 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
                     <h4 className="font-medium mb-2">Skills</h4>
                     <div className="flex flex-wrap gap-1">
                       {talent.skills.map((skill) => (
-                        <Badge key={skill} variant="secondary" className="text-xs">
+                        <Badge
+                          key={skill}
+                          variant="secondary"
+                          className="text-xs"
+                        >
                           {skill}
                         </Badge>
                       ))}
@@ -188,7 +217,11 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
                     <h4 className="font-medium mb-2">Languages</h4>
                     <div className="flex flex-wrap gap-1">
                       {talent.languages.map((language) => (
-                        <Badge key={language} variant="outline" className="text-xs">
+                        <Badge
+                          key={language}
+                          variant="outline"
+                          className="text-xs"
+                        >
                           {language}
                         </Badge>
                       ))}
@@ -216,7 +249,9 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="text-center p-4 border rounded-lg">
-                    <div className="text-pink-500 font-bold text-lg mb-1">Instagram</div>
+                    <div className="text-pink-500 font-bold text-lg mb-1">
+                      Instagram
+                    </div>
                     <div className="space-y-1">
                       <div className="flex items-center justify-center text-sm">
                         <Users className="w-3 h-3 mr-1" />
@@ -227,13 +262,16 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
                         {talent.socialMetrics.instagram.engagementRate}%
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        Avg Reach: {talent.socialMetrics.instagram.averageReach.toLocaleString()}
+                        Avg Reach:{" "}
+                        {talent.socialMetrics.instagram.averageReach.toLocaleString()}
                       </div>
                     </div>
                   </div>
 
                   <div className="text-center p-4 border rounded-lg">
-                    <div className="text-black font-bold text-lg mb-1">TikTok</div>
+                    <div className="text-black font-bold text-lg mb-1">
+                      TikTok
+                    </div>
                     <div className="space-y-1">
                       <div className="flex items-center justify-center text-sm">
                         <Users className="w-3 h-3 mr-1" />
@@ -244,13 +282,16 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
                         {talent.socialMetrics.tiktok.engagementRate}%
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        Avg Reach: {talent.socialMetrics.tiktok.averageReach.toLocaleString()}
+                        Avg Reach:{" "}
+                        {talent.socialMetrics.tiktok.averageReach.toLocaleString()}
                       </div>
                     </div>
                   </div>
 
                   <div className="text-center p-4 border rounded-lg">
-                    <div className="text-red-500 font-bold text-lg mb-1">YouTube</div>
+                    <div className="text-red-500 font-bold text-lg mb-1">
+                      YouTube
+                    </div>
                     <div className="space-y-1">
                       <div className="flex items-center justify-center text-sm">
                         <Users className="w-3 h-3 mr-1" />
@@ -261,7 +302,8 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
                         {talent.socialMetrics.youtube.engagementRate}%
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        Avg Reach: {talent.socialMetrics.youtube.averageReach.toLocaleString()}
+                        Avg Reach:{" "}
+                        {talent.socialMetrics.youtube.averageReach.toLocaleString()}
                       </div>
                     </div>
                   </div>
@@ -287,7 +329,9 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                   </div>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{item.description}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {item.description}
+                  </p>
                 </div>
               ))}
             </div>
@@ -302,15 +346,25 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
           <CardContent>
             <div className="space-y-4">
               {talent.projectHistory.map((project) => (
-                <div key={project.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div
+                  key={project.id}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
                   <div>
                     <h4 className="font-medium">{project.title}</h4>
-                    <p className="text-sm text-muted-foreground">{project.client}</p>
-                    <p className="text-xs text-muted-foreground">{project.date}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {project.client}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {project.date}
+                    </p>
                   </div>
                   <div className="flex items-center">
                     {[...Array(project.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 text-yellow-500 fill-current" />
+                      <Star
+                        key={i}
+                        className="w-4 h-4 text-yellow-500 fill-current"
+                      />
                     ))}
                   </div>
                 </div>
@@ -320,5 +374,5 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
         </Card>
       </div>
     </DashboardLayout>
-  )
+  );
 }
