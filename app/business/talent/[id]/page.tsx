@@ -17,7 +17,7 @@ import {
   LinkIcon,
 } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
-import { useState } from "react";
+import { useState, use } from "react";
 import { ChatDialog } from "@/components/ui/chat-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/auth-context";
@@ -39,6 +39,9 @@ export default function TalentProfile({ params }: TalentProfileProps) {
   const { showToast } = useToast();
   const { user } = useAuth();
 
+  // Unwrap params using React.use()
+  const unwrappedParams = use(params);
+
   // Estado para controlar la visibilidad del modal de chat
   const [isChatOpen, setIsChatOpen] = useState(false);
   // Estado para controlar la visibilidad del modal de compartir
@@ -48,7 +51,7 @@ export default function TalentProfile({ params }: TalentProfileProps) {
 
   // Mock talent data based on ID
   const talent = {
-    id: params.id,
+    id: unwrappedParams.id,
     name: "Sofia Rodriguez",
     category: "Fashion Model",
     location: "Los Angeles, CA",

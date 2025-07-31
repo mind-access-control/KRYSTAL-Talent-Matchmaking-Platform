@@ -71,7 +71,7 @@ export default function AdminUsersPage() {
       full_name: "Admin User",
       user_type: "admin",
       status: "active",
-      avatar_url: "/placeholder.svg?height=40&width=40",
+      avatar_url: null, // No avatar, will show initials "AU"
       location: "New York, NY",
       created_at: "2024-01-01T00:00:00Z",
       last_login: "2024-01-15T10:30:00Z",
@@ -82,7 +82,7 @@ export default function AdminUsersPage() {
       full_name: "Sarah Johnson",
       user_type: "business",
       status: "active",
-      avatar_url: "/placeholder.svg?height=40&width=40",
+      avatar_url: "/placeholder-user.jpg", // Has avatar, will show image
       company_name: "Creative Studios Inc",
       location: "Los Angeles, CA",
       created_at: "2024-01-02T00:00:00Z",
@@ -94,7 +94,7 @@ export default function AdminUsersPage() {
       full_name: "Michael Chen",
       user_type: "business",
       status: "active",
-      avatar_url: "/placeholder.svg?height=40&width=40",
+      avatar_url: null, // No avatar, will show initials "MC"
       company_name: "BrandCo Marketing",
       location: "New York, NY",
       created_at: "2024-01-03T00:00:00Z",
@@ -106,7 +106,7 @@ export default function AdminUsersPage() {
       full_name: "Emma Rodriguez",
       user_type: "talent",
       status: "active",
-      avatar_url: "/placeholder.svg?height=40&width=40",
+      avatar_url: null, // No avatar, will show initials "ER"
       location: "Miami, FL",
       created_at: "2024-01-04T00:00:00Z",
       last_login: "2024-01-15T11:20:00Z",
@@ -117,7 +117,7 @@ export default function AdminUsersPage() {
       full_name: "James Wilson",
       user_type: "talent",
       status: "active",
-      avatar_url: "/placeholder.svg?height=40&width=40",
+      avatar_url: null, // No avatar, will show initials "JW"
       location: "Atlanta, GA",
       created_at: "2024-01-05T00:00:00Z",
       last_login: "2024-01-13T14:30:00Z",
@@ -128,9 +128,32 @@ export default function AdminUsersPage() {
       full_name: "Sophia Kim",
       user_type: "talent",
       status: "pending",
-      avatar_url: "/placeholder.svg?height=40&width=40",
+      avatar_url: null, // No avatar, will show initials "SK"
       location: "San Francisco, CA",
       created_at: "2024-01-06T00:00:00Z",
+    },
+    {
+      id: "7",
+      email: "designer@example.com",
+      full_name: "Alex Thompson",
+      user_type: "talent",
+      status: "active",
+      avatar_url: null, // No avatar, will show initials "AT"
+      location: "Austin, TX",
+      created_at: "2024-01-07T00:00:00Z",
+      last_login: "2024-01-15T08:45:00Z",
+    },
+    {
+      id: "8",
+      email: "agency@example.com",
+      full_name: "Maria Garcia",
+      user_type: "business",
+      status: "active",
+      avatar_url: "/placeholder-user.jpg", // Has avatar, will show image
+      company_name: "Digital Agency Pro",
+      location: "Chicago, IL",
+      created_at: "2024-01-08T00:00:00Z",
+      last_login: "2024-01-14T17:20:00Z",
     },
   ]);
 
@@ -354,13 +377,15 @@ export default function AdminUsersPage() {
                         <div className="flex items-center space-x-3">
                           <Avatar className="h-8 w-8">
                             <AvatarImage
-                              src={user.avatar_url || "/placeholder.svg"}
+                              src={user.avatar_url || undefined}
+                              alt={user.full_name}
                             />
-                            <AvatarFallback>
+                            <AvatarFallback className="bg-primary text-primary-foreground font-medium">
                               {user.full_name
                                 .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
+                                .map((n) => n.charAt(0))
+                                .join("")
+                                .toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                           <div>

@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 type Language = "en" | "es";
 
@@ -28,6 +28,8 @@ const translations = {
     "nav.socialMedia": "Social Media",
     "nav.messages": "Messages",
     "nav.aiPreferences": "AI Preferences",
+    "nav.users": "Users",
+    "nav.aiMonitor": "AI Monitor",
 
     // Landing Page
     "hero.title": "Discover Your Next Star. Unleash Your Potential.",
@@ -115,6 +117,32 @@ const translations = {
     "messages.talent": "Talent",
     "messages.unread": "unread",
 
+    // Dashboard
+    "dashboard.welcome": "Welcome",
+    "dashboard.systemSettings": "System Settings",
+    "dashboard.runBackup": "Run Backup",
+    "dashboard.monitorPerformance":
+      "Monitor platform performance and manage system operations.",
+    "dashboard.systemAlerts": "System Alerts",
+    "dashboard.systemAlertsDesc": "Recent system notifications and alerts",
+    "dashboard.platformMetrics": "Platform Metrics",
+    "dashboard.platformMetricsDesc": "Key performance indicators",
+    "dashboard.recentUsers": "Recent User Registrations",
+    "dashboard.recentUsersDesc": "Latest users who joined the platform",
+    "dashboard.totalUsers": "Total Users",
+    "dashboard.activePlatformUsers": "Active platform users",
+    "dashboard.talentUsers": "Talent Users",
+    "dashboard.activeTalentUsers": "Active talent users",
+    "dashboard.businessUsers": "Business Users",
+    "dashboard.activeBusinessUsers": "Active business users",
+    "dashboard.activeProjects": "Active Projects",
+    "dashboard.currentlyRunning": "Currently running",
+    "dashboard.platformRevenue": "Platform Revenue",
+    "dashboard.thisMonth": "This month",
+    "dashboard.systemHealth": "System Health",
+    "dashboard.uptimeThisMonth": "Uptime this month",
+    "dashboard.fromLastMonth": "from last month",
+
     // Common
     "common.loading": "Loading...",
     "common.save": "Save",
@@ -150,6 +178,36 @@ const translations = {
     "nav.socialMedia": "Redes Sociales",
     "nav.messages": "Mensajes",
     "nav.aiPreferences": "Preferencias IA",
+    "nav.users": "Usuarios",
+    "nav.aiMonitor": "Monitor IA",
+
+    // Dashboard
+    "dashboard.welcome": "Bienvenido",
+    "dashboard.systemSettings": "Configuración del Sistema",
+    "dashboard.runBackup": "Ejecutar Respaldo",
+    "dashboard.monitorPerformance":
+      "Monitorea el rendimiento de la plataforma y gestiona las operaciones del sistema.",
+    "dashboard.systemAlerts": "Alertas del Sistema",
+    "dashboard.systemAlertsDesc":
+      "Notificaciones y alertas recientes del sistema",
+    "dashboard.platformMetrics": "Métricas de la Plataforma",
+    "dashboard.platformMetricsDesc": "Indicadores clave de rendimiento",
+    "dashboard.recentUsers": "Registros Recientes de Usuarios",
+    "dashboard.recentUsersDesc":
+      "Últimos usuarios que se unieron a la plataforma",
+    "dashboard.totalUsers": "Total de Usuarios",
+    "dashboard.activePlatformUsers": "Usuarios activos de la plataforma",
+    "dashboard.talentUsers": "Usuarios Talento",
+    "dashboard.activeTalentUsers": "Usuarios talento activos",
+    "dashboard.businessUsers": "Usuarios Empresa",
+    "dashboard.activeBusinessUsers": "Usuarios empresa activos",
+    "dashboard.activeProjects": "Proyectos Activos",
+    "dashboard.currentlyRunning": "Actualmente ejecutándose",
+    "dashboard.platformRevenue": "Ingresos de la Plataforma",
+    "dashboard.thisMonth": "Este mes",
+    "dashboard.systemHealth": "Salud del Sistema",
+    "dashboard.uptimeThisMonth": "Tiempo activo este mes",
+    "dashboard.fromLastMonth": "del mes pasado",
 
     // Landing Page
     "hero.title": "Descubre Tu Próxima Estrella. Desbloquea Tu Potencial.",
@@ -263,13 +321,21 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
 );
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>(() => {
+  const [language, setLanguage] = useState<Language>("en");
+
+  // Initialize language from localStorage on client side
+  useEffect(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("krystal-language");
-      return (saved as Language) || "en";
+      if (saved && (saved === "en" || saved === "es")) {
+        setLanguage(saved as Language);
+      } else {
+        // Set default to English if no language is saved
+        localStorage.setItem("krystal-language", "en");
+        setLanguage("en");
+      }
     }
-    return "en";
-  });
+  }, []);
 
   const t = (key: string): string => {
     return (

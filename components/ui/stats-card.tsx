@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LucideIcon } from "lucide-react"; // Importa LucideIcon para tipado
+import { useLanguage } from "@/contexts/language-context";
 
 interface StatsCardProps {
   title: string;
@@ -20,6 +21,7 @@ export function StatsCard({
   icon,
   trend,
 }: StatsCardProps) {
+  const { t } = useLanguage();
   let renderedIcon: React.ReactNode = null;
 
   if (icon) {
@@ -68,7 +70,7 @@ export function StatsCard({
             }`}
           >
             {trend.isPositive ? "+" : ""}
-            {trend.value}% from last month
+            {trend.value}% {t("dashboard.fromLastMonth")}
           </div>
         )}
       </CardContent>

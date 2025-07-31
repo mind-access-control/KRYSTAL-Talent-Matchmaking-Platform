@@ -44,10 +44,16 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setLanguage("en")}>
+              <DropdownMenuItem
+                onClick={() => setLanguage("en")}
+                className={language === "en" ? "bg-muted" : ""}
+              >
                 English
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLanguage("es")}>
+              <DropdownMenuItem
+                onClick={() => setLanguage("es")}
+                className={language === "es" ? "bg-muted" : ""}
+              >
                 Español
               </DropdownMenuItem>
             </DropdownMenuContent>

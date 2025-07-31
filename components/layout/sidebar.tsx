@@ -18,6 +18,8 @@ import {
   ImageIcon,
   Share2,
   Users,
+  Shield,
+  Database,
 } from "lucide-react";
 
 const businessNavItems = [
@@ -96,13 +98,48 @@ const talentNavItems = [
   },
 ];
 
+const adminNavItems = [
+  {
+    title: "Dashboard",
+    href: "/admin/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    title: "Users",
+    href: "/admin/users",
+    icon: Users,
+  },
+  {
+    title: "AI Monitor",
+    href: "/admin/ai-monitor",
+    icon: Database,
+  },
+  {
+    title: "Settings",
+    href: "/admin/settings",
+    icon: Settings,
+  },
+];
+
 export function Sidebar() {
   const pathname = usePathname();
   const { user } = useAuth();
   const { t } = useLanguage();
 
-  const navItems =
-    user?.type === "business" ? businessNavItems : talentNavItems;
+  const getNavItems = () => {
+    switch (user?.type) {
+      case "admin":
+        return adminNavItems;
+      case "business":
+        return businessNavItems;
+      case "talent":
+        return talentNavItems;
+      default:
+        return talentNavItems;
+    }
+  };
+
+  const navItems = getNavItems();
 
   return (
     <div className="pb-12 w-64 h-screen">
@@ -125,7 +162,11 @@ export function Sidebar() {
                 >
                   <Link href={item.href}>
                     <item.icon className="mr-2 h-4 w-4" />
-                    {t(`nav.${item.title.toLowerCase()}`)}
+                    {item.title === "AI Preferences"
+                      ? t("nav.aiPreferences")
+                      : item.title === "AI Monitor"
+                      ? t("nav.aiMonitor")
+                      : t(`nav.${item.title.toLowerCase()}`)}
                   </Link>
                 </Button>
               ))}

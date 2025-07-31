@@ -1,4 +1,6 @@
 "use client";
+import { useState } from "react";
+import Link from "next/link";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { StatsCard } from "@/components/ui/stats-card";
 import {
@@ -13,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/auth-context";
 import { useLanguage } from "@/contexts/language-context";
+import { useToast } from "@/components/ui/toast";
 import {
   Users,
   Briefcase,
@@ -27,105 +30,162 @@ import {
   Database,
 } from "lucide-react";
 
-// Mock data for admin dashboard
-const mockStats = [
-  {
-    title: "Total Users",
-    value: "12,847",
-    description: "Active platform users",
-    icon: Users,
-    trend: { value: 12, isPositive: true },
-  },
-  {
-    title: "Active Projects",
-    value: "1,234",
-    description: "Currently running",
-    icon: Briefcase,
-    trend: { value: 8, isPositive: true },
-  },
-  {
-    title: "Platform Revenue",
-    value: "$245,670",
-    description: "This month",
-    icon: DollarSign,
-    trend: { value: 15, isPositive: true },
-  },
-  {
-    title: "System Health",
-    value: "99.9%",
-    description: "Uptime this month",
-    icon: Activity,
-    trend: { value: 0.1, isPositive: true },
-  },
-];
-
-const mockSystemAlerts = [
-  {
-    id: "1",
-    type: "warning",
-    title: "High API Usage",
-    message: "AI matching service approaching rate limits",
-    time: "5 minutes ago",
-    severity: "medium",
-  },
-  {
-    id: "2",
-    type: "info",
-    title: "Scheduled Maintenance",
-    message: "Database optimization scheduled for tonight",
-    time: "2 hours ago",
-    severity: "low",
-  },
-  {
-    id: "3",
-    type: "success",
-    title: "Backup Completed",
-    message: "Daily backup completed successfully",
-    time: "6 hours ago",
-    severity: "low",
-  },
-];
-
-const mockRecentUsers = [
-  {
-    id: "1",
-    name: "Sarah Johnson",
-    email: "sarah@creativestudios.com",
-    type: "business",
-    joinDate: "2024-01-28",
-    status: "active",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: "2",
-    name: "Emma Rodriguez",
-    email: "emma@example.com",
-    type: "talent",
-    joinDate: "2024-01-27",
-    status: "pending",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-  {
-    id: "3",
-    name: "Michael Chen",
-    email: "michael@brandco.com",
-    type: "business",
-    joinDate: "2024-01-26",
-    status: "active",
-    avatar: "/placeholder.svg?height=32&width=32",
-  },
-];
-
-const mockPlatformMetrics = [
-  { label: "Daily Active Users", value: "3,247", change: "+12%" },
-  { label: "Successful Matches", value: "89%", change: "+5%" },
-  { label: "Average Response Time", value: "1.2s", change: "-8%" },
-  { label: "User Satisfaction", value: "4.8/5", change: "+3%" },
-];
-
 export default function AdminDashboard() {
   const { user } = useAuth();
   const { t } = useLanguage();
+  const { showToast } = useToast();
+  const [isBackupRunning, setIsBackupRunning] = useState(false);
+
+  // Mock data for admin dashboard with translations
+  const mockStats = [
+    {
+      title: t("dashboard.totalUsers"),
+      value: "12,847",
+      description: t("dashboard.activePlatformUsers"),
+      icon: Users,
+      trend: { value: 12, isPositive: true },
+      breakdown: {
+        talent: "8,234",
+        business: "4,613",
+      },
+    },
+    {
+      title: t("dashboard.talentUsers"),
+      value: "8,234",
+      description: t("dashboard.activeTalentUsers"),
+      icon: Users,
+      trend: { value: 15, isPositive: true },
+    },
+    {
+      title: t("dashboard.businessUsers"),
+      value: "4,613",
+      description: t("dashboard.activeBusinessUsers"),
+      icon: Briefcase,
+      trend: { value: 8, isPositive: true },
+    },
+    {
+      title: t("dashboard.activeProjects"),
+      value: "1,234",
+      description: t("dashboard.currentlyRunning"),
+      icon: Briefcase,
+      trend: { value: 8, isPositive: true },
+    },
+    {
+      title: t("dashboard.platformRevenue"),
+      value: "$245,670",
+      description: t("dashboard.thisMonth"),
+      icon: DollarSign,
+      trend: { value: 15, isPositive: true },
+    },
+    {
+      title: t("dashboard.systemHealth"),
+      value: "99.9%",
+      description: t("dashboard.uptimeThisMonth"),
+      icon: Activity,
+      trend: { value: 0.1, isPositive: true },
+    },
+  ];
+
+  const mockSystemAlerts = [
+    {
+      id: "1",
+      type: "warning",
+      title: "High API Usage",
+      message: "AI matching service approaching rate limits",
+      time: "5 minutes ago",
+      severity: "medium",
+    },
+    {
+      id: "2",
+      type: "info",
+      title: "Scheduled Maintenance",
+      message: "Database optimization scheduled for tonight",
+      time: "2 hours ago",
+      severity: "low",
+    },
+    {
+      id: "3",
+      type: "success",
+      title: "Backup Completed",
+      message: "Daily backup completed successfully",
+      time: "6 hours ago",
+      severity: "low",
+    },
+  ];
+
+  const mockRecentUsers = [
+    {
+      id: "1",
+      name: "Sarah Johnson",
+      email: "sarah@creativestudios.com",
+      type: "business",
+      joinDate: "2024-01-28",
+      status: "active",
+      avatar: null, // No avatar, will show initials "SJ"
+    },
+    {
+      id: "2",
+      name: "Emma Rodriguez",
+      email: "emma@example.com",
+      type: "talent",
+      joinDate: "2024-01-27",
+      status: "pending",
+      avatar: null, // No avatar, will show initials "ER"
+    },
+    {
+      id: "3",
+      name: "Michael Chen",
+      email: "michael@brandco.com",
+      type: "business",
+      joinDate: "2024-01-26",
+      status: "active",
+      avatar: "/placeholder-user.jpg", // Has avatar, will show image
+    },
+    {
+      id: "4",
+      name: "Alex Thompson",
+      email: "alex@designstudio.com",
+      type: "talent",
+      joinDate: "2024-01-25",
+      status: "active",
+      avatar: null, // No avatar, will show initials "AT"
+    },
+  ];
+
+  const mockPlatformMetrics = [
+    { label: "Daily Active Users", value: "3,247", change: "+12%" },
+    { label: "Successful Matches", value: "89%", change: "+5%" },
+    { label: "Average Response Time", value: "1.2s", change: "-8%" },
+    { label: "User Satisfaction", value: "4.8/5", change: "+3%" },
+  ];
+
+  const handleRunBackup = async () => {
+    setIsBackupRunning(true);
+    showToast("Starting system backup...", "info");
+
+    try {
+      // Simulate backup process with progress updates
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      showToast("Backing up user data...", "info");
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      showToast("Backing up project data...", "info");
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      showToast("Backing up system configurations...", "info");
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      showToast(
+        "System backup completed successfully! Backup saved to secure cloud storage.",
+        "success"
+      );
+    } catch (error) {
+      showToast("Backup failed. Please try again.", "error");
+    } finally {
+      setIsBackupRunning(false);
+    }
+  };
 
   const getAlertIcon = (type: string) => {
     switch (type) {
@@ -189,26 +249,86 @@ export default function AdminDashboard() {
               {t("dashboard.welcome")}, {user?.name}!
             </h1>
             <p className="text-muted-foreground mt-2">
-              Monitor platform performance and manage system operations.
+              {t("dashboard.monitorPerformance")}
             </p>
           </div>
           <div className="flex space-x-2">
-            <Button variant="outline">
-              <Settings className="mr-2 h-4 w-4" />
-              System Settings
+            <Button variant="outline" asChild>
+              <Link href="/admin/settings">
+                <Settings className="mr-2 h-4 w-4" />
+                {t("dashboard.systemSettings")}
+              </Link>
             </Button>
-            <Button>
-              <Database className="mr-2 h-4 w-4" />
-              Run Backup
+            <Button onClick={handleRunBackup} disabled={isBackupRunning}>
+              <Database
+                className={`mr-2 h-4 w-4 ${
+                  isBackupRunning ? "animate-spin" : ""
+                }`}
+              />
+              {isBackupRunning ? "Running..." : t("dashboard.runBackup")}
             </Button>
           </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {mockStats.map((stat, index) => (
-            <StatsCard key={index} {...stat} />
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+          {mockStats.map((stat, index) => {
+            // Special handling for total users card with breakdown
+            if (index === 0 && stat.breakdown) {
+              return (
+                <Card key={index} className="xl:col-span-2">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      {stat.title}
+                    </CardTitle>
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{stat.value}</div>
+                    {stat.description && (
+                      <p className="text-xs text-muted-foreground">
+                        {stat.description}
+                      </p>
+                    )}
+                    {stat.trend && (
+                      <div
+                        className={`text-xs ${
+                          stat.trend.isPositive
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
+                        {stat.trend.isPositive ? "+" : ""}
+                        {stat.trend.value}% {t("dashboard.fromLastMonth")}
+                      </div>
+                    )}
+                    {/* Breakdown */}
+                    <div className="mt-3 pt-3 border-t">
+                      <div className="flex justify-between text-xs">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+                          <span className="text-muted-foreground">Talent:</span>
+                          <span className="ml-1 font-medium">
+                            {stat.breakdown.talent}
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                          <span className="text-muted-foreground">
+                            Business:
+                          </span>
+                          <span className="ml-1 font-medium">
+                            {stat.breakdown.business}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            }
+            return <StatsCard key={index} {...stat} />;
+          })}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -217,10 +337,10 @@ export default function AdminDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Shield className="mr-2 h-5 w-5" />
-                System Alerts
+                {t("dashboard.systemAlerts")}
               </CardTitle>
               <CardDescription>
-                Recent system notifications and alerts
+                {t("dashboard.systemAlertsDesc")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -256,9 +376,11 @@ export default function AdminDashboard() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <BarChart3 className="mr-2 h-5 w-5" />
-                Platform Metrics
+                {t("dashboard.platformMetrics")}
               </CardTitle>
-              <CardDescription>Key performance indicators</CardDescription>
+              <CardDescription>
+                {t("dashboard.platformMetricsDesc")}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -294,11 +416,9 @@ export default function AdminDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Users className="mr-2 h-5 w-5" />
-              Recent User Registrations
+              {t("dashboard.recentUsers")}
             </CardTitle>
-            <CardDescription>
-              Latest users who joined the platform
-            </CardDescription>
+            <CardDescription>{t("dashboard.recentUsersDesc")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -310,10 +430,16 @@ export default function AdminDashboard() {
                   <div className="flex items-center space-x-4">
                     <Avatar className="h-10 w-10">
                       <AvatarImage
-                        src={user.avatar || "/placeholder.svg"}
+                        src={user.avatar || undefined}
                         alt={user.name}
                       />
-                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="bg-primary text-primary-foreground font-medium">
+                        {user.name
+                          .split(" ")
+                          .map((n) => n.charAt(0))
+                          .join("")
+                          .toUpperCase()}
+                      </AvatarFallback>
                     </Avatar>
                     <div>
                       <h4 className="font-medium">{user.name}</h4>
