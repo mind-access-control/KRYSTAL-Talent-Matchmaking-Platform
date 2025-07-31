@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { createContext, useContext, useState } from "react"
+import type React from "react";
+import { createContext, useContext, useState } from "react";
 
-type Language = "en" | "es"
+type Language = "en" | "es";
 
 interface LanguageContextType {
-  language: Language
-  setLanguage: (lang: Language) => void
-  t: (key: string) => string
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (key: string) => string;
 }
 
 const translations = {
@@ -23,10 +23,16 @@ const translations = {
     "nav.projects": "Projects",
     "nav.settings": "Settings",
     "nav.logout": "Logout",
+    "nav.network": "Network",
+    "nav.favorites": "Favorites",
+    "nav.socialMedia": "Social Media",
+    "nav.messages": "Messages",
+    "nav.aiPreferences": "AI Preferences",
 
     // Landing Page
     "hero.title": "Discover Your Next Star. Unleash Your Potential.",
-    "hero.subtitle": "AI-powered talent matchmaking platform connecting businesses with creative professionals",
+    "hero.subtitle":
+      "AI-powered talent matchmaking platform connecting businesses with creative professionals",
     "hero.cta": "Get Started",
     "features.ai": "AI-Powered Matching",
     "features.portfolio": "Unified Portfolio",
@@ -66,6 +72,49 @@ const translations = {
     "project.publish": "Publish Project",
     "project.draft": "Save Draft",
 
+    // Network
+    "network.title": "Network",
+    "network.subtitle":
+      "Connect with companies and other talented professionals",
+    "network.companies": "Companies",
+    "network.talent": "Talent",
+    "network.connected": "Connected",
+    "network.connect": "Connect",
+    "network.message": "Message",
+    "network.findCompanies": "Find Companies",
+    "network.findTalent": "Find Talent",
+    "network.searchCompanies": "Search companies...",
+    "network.searchTalent": "Search talent...",
+    "network.selectIndustry": "Select industry",
+    "network.selectCategory": "Select category",
+    "network.sortBy": "Sort by",
+    "network.matchScore": "Match Score",
+    "network.projectCount": "Project Count",
+    "network.followers": "Followers",
+    "network.engagement": "Engagement Rate",
+    "network.name": "Name",
+    "network.totalTalent": "Total Talent",
+    "network.highMatch": "High Match",
+    "network.available": "Available",
+    "network.noResults": "No results found",
+    "network.tryAdjusting": "Try adjusting your search criteria",
+    "network.noConnections": "No connections available at the moment",
+    "network.connectionRequestSent":
+      "Your connection request has been sent successfully.",
+
+    // Messages
+    "messages.title": "Messages",
+    "messages.subtitle": "Manage your conversations with talent",
+    "messages.newMessage": "New Message",
+    "messages.searchConversations": "Search conversations...",
+    "messages.conversations": "Conversations",
+    "messages.noConversations": "No conversations found",
+    "messages.tryAdjusting": "Try adjusting your search terms",
+    "messages.startConnecting":
+      "Start connecting with talent to see your messages here",
+    "messages.talent": "Talent",
+    "messages.unread": "unread",
+
     // Common
     "common.loading": "Loading...",
     "common.save": "Save",
@@ -76,6 +125,14 @@ const translations = {
     "common.upload": "Upload",
     "common.connect": "Connect",
     "common.connected": "Connected",
+    "common.search": "Search",
+    "common.filter": "Filter",
+    "common.sort": "Sort",
+    "common.all": "All",
+    "common.more": "more",
+    "common.projects": "projects completed",
+    "common.engagement": "engagement",
+    "common.followers": "followers",
   },
   es: {
     // Navigation
@@ -88,6 +145,11 @@ const translations = {
     "nav.projects": "Proyectos",
     "nav.settings": "Configuración",
     "nav.logout": "Cerrar Sesión",
+    "nav.network": "Red",
+    "nav.favorites": "Favoritos",
+    "nav.socialMedia": "Redes Sociales",
+    "nav.messages": "Mensajes",
+    "nav.aiPreferences": "Preferencias IA",
 
     // Landing Page
     "hero.title": "Descubre Tu Próxima Estrella. Desbloquea Tu Potencial.",
@@ -132,6 +194,49 @@ const translations = {
     "project.publish": "Publicar Proyecto",
     "project.draft": "Guardar Borrador",
 
+    // Network
+    "network.title": "Red",
+    "network.subtitle":
+      "Conéctate con empresas y otros profesionales talentosos",
+    "network.companies": "Empresas",
+    "network.talent": "Talento",
+    "network.connected": "Conectado",
+    "network.connect": "Conectar",
+    "network.message": "Mensaje",
+    "network.findCompanies": "Encontrar Empresas",
+    "network.findTalent": "Encontrar Talento",
+    "network.searchCompanies": "Buscar empresas...",
+    "network.searchTalent": "Buscar talento...",
+    "network.selectIndustry": "Seleccionar industria",
+    "network.selectCategory": "Seleccionar categoría",
+    "network.sortBy": "Ordenar por",
+    "network.matchScore": "Puntuación de Coincidencia",
+    "network.projectCount": "Cantidad de Proyectos",
+    "network.followers": "Seguidores",
+    "network.engagement": "Tasa de Participación",
+    "network.name": "Nombre",
+    "network.totalTalent": "Talento Total",
+    "network.highMatch": "Alta Coincidencia",
+    "network.available": "Disponible",
+    "network.noResults": "No se encontraron resultados",
+    "network.tryAdjusting": "Intenta ajustar tus criterios de búsqueda",
+    "network.noConnections": "No hay conexiones disponibles en este momento",
+    "network.connectionRequestSent":
+      "Tu solicitud de conexión ha sido enviada exitosamente.",
+
+    // Messages
+    "messages.title": "Mensajes",
+    "messages.subtitle": "Gestiona tus conversaciones con talento",
+    "messages.newMessage": "Nuevo Mensaje",
+    "messages.searchConversations": "Buscar conversaciones...",
+    "messages.conversations": "Conversaciones",
+    "messages.noConversations": "No se encontraron conversaciones",
+    "messages.tryAdjusting": "Intenta ajustar tus términos de búsqueda",
+    "messages.startConnecting":
+      "Comienza a conectar con talento para ver tus mensajes aquí",
+    "messages.talent": "Talento",
+    "messages.unread": "no leídos",
+
     // Common
     "common.loading": "Cargando...",
     "common.save": "Guardar",
@@ -142,25 +247,56 @@ const translations = {
     "common.upload": "Subir",
     "common.connect": "Conectar",
     "common.connected": "Conectado",
+    "common.search": "Buscar",
+    "common.filter": "Filtrar",
+    "common.sort": "Ordenar",
+    "common.all": "Todos",
+    "common.more": "más",
+    "common.projects": "proyectos completados",
+    "common.engagement": "participación",
+    "common.followers": "seguidores",
   },
-}
+};
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
+const LanguageContext = createContext<LanguageContextType | undefined>(
+  undefined
+);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>("en")
+  const [language, setLanguage] = useState<Language>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("krystal-language");
+      return (saved as Language) || "en";
+    }
+    return "en";
+  });
 
   const t = (key: string): string => {
-    return translations[language][key as keyof (typeof translations)["en"]] || key
-  }
+    return (
+      translations[language][key as keyof (typeof translations)["en"]] || key
+    );
+  };
 
-  return <LanguageContext.Provider value={{ language, setLanguage, t }}>{children}</LanguageContext.Provider>
+  const handleSetLanguage = (lang: Language) => {
+    setLanguage(lang);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("krystal-language", lang);
+    }
+  };
+
+  return (
+    <LanguageContext.Provider
+      value={{ language, setLanguage: handleSetLanguage, t }}
+    >
+      {children}
+    </LanguageContext.Provider>
+  );
 }
 
 export function useLanguage() {
-  const context = useContext(LanguageContext)
+  const context = useContext(LanguageContext);
   if (!context) {
-    throw new Error("useLanguage must be used within a LanguageProvider")
+    throw new Error("useLanguage must be used within a LanguageProvider");
   }
-  return context
+  return context;
 }

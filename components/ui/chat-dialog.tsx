@@ -13,14 +13,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, Paperclip, Smile } from "lucide-react";
+import { Send, Paperclip, Smile, User } from "lucide-react"; // Asegúrate de que 'User' esté importado
 import { useToast } from "@/components/ui/toast";
 
 interface Message {
   id: string;
   senderId: string;
   senderName: string;
-  senderAvatar?: string;
+  senderAvatar?: string | null;
   content: string;
   timestamp: Date;
   type: "text" | "image" | "file";
@@ -30,10 +30,10 @@ interface ChatDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   recipientName: string;
-  recipientAvatar?: string;
+  recipientAvatar?: string | null;
   currentUserId: string;
   currentUserName: string;
-  currentUserAvatar?: string;
+  currentUserAvatar?: string | null;
 }
 
 export function ChatDialog({
@@ -46,12 +46,35 @@ export function ChatDialog({
   currentUserAvatar,
 }: ChatDialogProps) {
   const { showToast } = useToast();
+
+  // Función auxiliar mejorada para normalizar la URL del avatar
+  const normalizeAvatarSrc = (avatarUrl?: string | null) => {
+    // Define las cadenas de placeholder comunes que deben activar el fallback
+    const placeholderStrings = [
+      "/placeholder.svg",
+      "/placeholder.svg?height=200&width=200", // Ejemplo de tu mock de talent
+      "/placeholder.svg?height=40&width=40", // Ejemplo de tu mock de mensajes
+      // Agrega cualquier otra ruta de placeholder específica que uses en tu proyecto
+    ];
+
+    // Si avatarUrl es nulo/indefinido, está vacío, o es una de las cadenas de placeholder,
+    // entonces retorna undefined para activar el AvatarFallback.
+    if (
+      !avatarUrl ||
+      avatarUrl.length === 0 ||
+      placeholderStrings.includes(avatarUrl)
+    ) {
+      return undefined;
+    }
+    return avatarUrl;
+  };
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
       senderId: "other",
       senderName: recipientName,
-      senderAvatar: recipientAvatar,
+      senderAvatar: normalizeAvatarSrc(recipientAvatar),
       content:
         "Hi! I'm interested in discussing this project opportunity with you.",
       timestamp: new Date(Date.now() - 3600000),
@@ -61,7 +84,7 @@ export function ChatDialog({
       id: "2",
       senderId: currentUserId,
       senderName: currentUserName,
-      senderAvatar: currentUserAvatar,
+      senderAvatar: normalizeAvatarSrc(currentUserAvatar),
       content:
         "Hello! I'd be happy to discuss the details. What would you like to know?",
       timestamp: new Date(Date.now() - 1800000),
@@ -70,6 +93,7 @@ export function ChatDialog({
   ]);
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  // CAMBIO: Corregido de HTMLDivLement a HTMLDivElement
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -87,7 +111,7 @@ export function ChatDialog({
       id: Date.now().toString(),
       senderId: currentUserId,
       senderName: currentUserName,
-      senderAvatar: currentUserAvatar,
+      senderAvatar: normalizeAvatarSrc(currentUserAvatar),
       content: newMessage,
       timestamp: new Date(),
       type: "text",
@@ -104,7 +128,7 @@ export function ChatDialog({
         id: (Date.now() + 1).toString(),
         senderId: "other",
         senderName: recipientName,
-        senderAvatar: recipientAvatar,
+        senderAvatar: normalizeAvatarSrc(recipientAvatar),
         content:
           "Thanks for your message! I'll review this and get back to you soon.",
         timestamp: new Date(),
@@ -134,8 +158,10 @@ export function ChatDialog({
         <DialogHeader className="p-4 border-b">
           <div className="flex items-center space-x-3">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={recipientAvatar || "/placeholder.svg"} />
-              <AvatarFallback>{recipientName.charAt(0)}</AvatarFallback>
+              <AvatarImage src={normalizeAvatarSrc(recipientAvatar)} />
+              <AvatarFallback className="bg-gray-200 text-gray-700 flex items-center justify-center">
+                <User className="h-5 w-5" />
+              </AvatarFallback>
             </Avatar>
             <div>
               <DialogTitle className="text-lg">{recipientName}</DialogTitle>
@@ -166,10 +192,10 @@ export function ChatDialog({
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage
-                      src={message.senderAvatar || "/placeholder.svg"}
+                      src={normalizeAvatarSrc(message.senderAvatar)}
                     />
-                    <AvatarFallback>
-                      {message.senderName.charAt(0)}
+                    <AvatarFallback className="bg-gray-200 text-gray-700 flex items-center justify-center">
+                      <User className="h-4 w-4" />
                     </AvatarFallback>
                   </Avatar>
                   <div
@@ -197,8 +223,10 @@ export function ChatDialog({
               <div className="flex justify-start">
                 <div className="flex items-start space-x-2">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={recipientAvatar || "/placeholder.svg"} />
-                    <AvatarFallback>{recipientName.charAt(0)}</AvatarFallback>
+                    <AvatarImage src={normalizeAvatarSrc(recipientAvatar)} />
+                    <AvatarFallback className="bg-gray-200 text-gray-700 flex items-center justify-center">
+                      <User className="h-4 w-4" />
+                    </AvatarFallback>
                   </Avatar>
                   <div className="bg-muted rounded-lg px-3 py-2">
                     <div className="flex space-x-1">

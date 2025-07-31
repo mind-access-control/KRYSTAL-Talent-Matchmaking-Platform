@@ -2,15 +2,18 @@
 
 import { useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
+import { useLanguage } from "@/contexts/language-context";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChatDialog } from "@/components/ui/chat-dialog";
-import { Search, MessageSquare, Plus, Clock } from "lucide-react";
+import { TalentSelectorDialog } from "@/components/ui/talent-selector-dialog";
+import { Search, MessageSquare, Plus, Clock, User } from "lucide-react";
 
 interface Conversation {
   id: string;
@@ -38,7 +41,7 @@ const mockConversations: Conversation[] = [
     participant: {
       id: "talent-1",
       name: "Emma Rodriguez",
-      avatar: "/placeholder.svg?height=40&width=40",
+      avatar: null,
       type: "talent",
     },
     lastMessage: {
@@ -56,7 +59,7 @@ const mockConversations: Conversation[] = [
     participant: {
       id: "talent-2",
       name: "James Wilson",
-      avatar: "/placeholder.svg?height=40&width=40",
+      avatar: null,
       type: "talent",
     },
     lastMessage: {
@@ -74,7 +77,7 @@ const mockConversations: Conversation[] = [
     participant: {
       id: "talent-3",
       name: "Sophia Kim",
-      avatar: "/placeholder.svg?height=40&width=40",
+      avatar: null,
       type: "talent",
     },
     lastMessage: {
@@ -91,12 +94,14 @@ const mockConversations: Conversation[] = [
 
 export default function BusinessMessagesPage() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [conversations, setConversations] =
     useState<Conversation[]>(mockConversations);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedConversation, setSelectedConversation] =
     useState<Conversation | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isTalentSelectorOpen, setIsTalentSelectorOpen] = useState(false);
 
   const filteredConversations = conversations.filter(
     (conv) =>
@@ -143,24 +148,56 @@ export default function BusinessMessagesPage() {
     0
   );
 
+  const handleNewMessage = () => {
+    setIsTalentSelectorOpen(true);
+  };
+
+  const handleTalentSelect = (talent: any) => {
+    // Create a new conversation with the selected talent
+    const newConversation: Conversation = {
+      id: `new-${Date.now()}`,
+      participant: {
+        id: talent.id,
+        name: talent.name,
+        avatar: talent.avatar || null,
+        type: "talent",
+      },
+      lastMessage: {
+        content: "New conversation started",
+        timestamp: new Date(),
+        isRead: true,
+        senderId: user?.id || "current-user",
+      },
+      unreadCount: 0,
+    };
+
+    // Add to conversations list
+    setConversations((prev) => [newConversation, ...prev]);
+
+    // Open chat with the new conversation
+    setSelectedConversation(newConversation);
+    setIsChatOpen(true);
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
+            <UserAvatar user={user} size="md" />
             <div>
-              <h1 className="text-3xl font-bold">Messages</h1>
-              <p className="text-muted-foreground">
-                Manage your conversations with talent
-              </p>
+              <h1 className="text-3xl font-bold">{t("messages.title")}</h1>
+              <p className="text-muted-foreground">{t("messages.subtitle")}</p>
             </div>
             {totalUnreadCount > 0 && (
-              <Badge variant="destructive">{totalUnreadCount} unread</Badge>
+              <Badge variant="destructive">
+                {totalUnreadCount} {t("messages.unread")}
+              </Badge>
             )}
           </div>
-          <Button>
+          <Button onClick={handleNewMessage}>
             <Plus className="h-4 w-4 mr-2" />
-            New Message
+            {t("messages.newMessage")}
           </Button>
         </div>
 
@@ -168,7 +205,7 @@ export default function BusinessMessagesPage() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
-            placeholder="Search conversations..."
+            placeholder={t("messages.searchConversations")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -180,7 +217,7 @@ export default function BusinessMessagesPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <MessageSquare className="h-5 w-5 mr-2" />
-              Conversations ({filteredConversations.length})
+              {t("messages.conversations")} ({filteredConversations.length})
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -189,12 +226,12 @@ export default function BusinessMessagesPage() {
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <MessageSquare className="h-12 w-12 text-muted-foreground mb-4" />
                   <h3 className="text-lg font-semibold mb-2">
-                    No conversations found
+                    {t("messages.noConversations")}
                   </h3>
                   <p className="text-muted-foreground">
                     {searchQuery
-                      ? "Try adjusting your search terms"
-                      : "Start connecting with talent to see your messages here"}
+                      ? t("messages.tryAdjusting")
+                      : t("messages.startConnecting")}
                   </p>
                 </div>
               ) : (
@@ -208,16 +245,10 @@ export default function BusinessMessagesPage() {
                       <div className="flex items-start space-x-3">
                         <Avatar className="h-12 w-12">
                           <AvatarImage
-                            src={
-                              conversation.participant.avatar ||
-                              "/placeholder.svg"
-                            }
+                            src={conversation.participant.avatar || undefined}
                           />
-                          <AvatarFallback>
-                            {conversation.participant.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
+                          <AvatarFallback className="bg-gray-200 text-gray-700 flex items-center justify-center">
+                            <User className="h-6 w-6" />
                           </AvatarFallback>
                         </Avatar>
 
@@ -228,7 +259,7 @@ export default function BusinessMessagesPage() {
                                 {conversation.participant.name}
                               </h3>
                               <Badge variant="outline" className="text-xs">
-                                Talent
+                                {t("messages.talent")}
                               </Badge>
                             </div>
                             <div className="flex items-center space-x-2">
@@ -291,6 +322,13 @@ export default function BusinessMessagesPage() {
             currentUserAvatar={user?.avatar}
           />
         )}
+
+        {/* Talent Selector Dialog */}
+        <TalentSelectorDialog
+          open={isTalentSelectorOpen}
+          onOpenChange={setIsTalentSelectorOpen}
+          onTalentSelect={handleTalentSelect}
+        />
       </div>
     </DashboardLayout>
   );

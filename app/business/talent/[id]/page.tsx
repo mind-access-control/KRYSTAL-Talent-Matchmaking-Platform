@@ -10,14 +10,41 @@ import {
   TrendingUp,
   Star,
   MessageSquare,
-  Heart,
+  Heart, // Ya importado
   Share2,
   Calendar,
+  Copy,
+  LinkIcon,
 } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import { useState } from "react";
+import { ChatDialog } from "@/components/ui/chat-dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/auth-context";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
-export default function TalentProfile({ params }: { params: { id: string } }) {
+// Define la interfaz para params explícitamente
+interface TalentProfileProps {
+  params: {
+    id: string;
+  };
+}
+
+export default function TalentProfile({ params }: TalentProfileProps) {
   const { showToast } = useToast();
+  const { user } = useAuth();
+
+  // Estado para controlar la visibilidad del modal de chat
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  // Estado para controlar la visibilidad del modal de compartir
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  // NUEVO ESTADO: Para controlar si el talento está en favoritos
+  const [isFavorited, setIsFavorited] = useState(false); // Inicialmente no está en favoritos
 
   // Mock talent data based on ID
   const talent = {
@@ -25,7 +52,7 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
     name: "Sofia Rodriguez",
     category: "Fashion Model",
     location: "Los Angeles, CA",
-    avatar: "/placeholder.svg?height=200&width=200",
+    avatar: null, // Establecido a null para probar las iniciales/icono
     bio: "Professional fashion model with 5+ years of experience in commercial and editorial photography. I specialize in lifestyle and beauty campaigns, bringing authenticity and creativity to every project. My passion for sustainable fashion and diverse representation drives my work in the industry.",
     matchScore: 95,
     skills: [
@@ -100,12 +127,73 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
     ],
   };
 
-  const handleContact = () => {
-    showToast("Message sent to Sofia Rodriguez!", "success");
+  // Función para obtener las iniciales del nombre (para el avatar fallback)
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
   };
 
+  const handleContact = () => {
+    setIsChatOpen(true);
+  };
+
+  // CAMBIO: Modificar handleSaveToFavorites para alternar el estado y el mensaje
   const handleSaveToFavorites = () => {
-    showToast("Added to favorites!", "success");
+    setIsFavorited((prev) => !prev); // Alternar el estado
+    if (isFavorited) {
+      showToast("Removed from favorites!", "info");
+    } else {
+      showToast("Added to favorites!", "success");
+    }
+  };
+
+  const portfolioUrl = `https://krystal.talent/portfolio/${talent.id}`;
+
+  const handleShare = (platform: string) => {
+    const url = portfolioUrl;
+    const text = `Check out ${talent.name}'s portfolio on KRYSTAL Talent`;
+
+    switch (platform) {
+      case "copy":
+        const el = document.createElement("textarea");
+        el.value = url;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand("copy");
+        document.body.removeChild(el);
+        showToast("Portfolio link copied to clipboard!", "success");
+        break;
+      case "linkedin":
+        window.open(
+          `https://linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+            url
+          )}`,
+          "_blank"
+        );
+        showToast("Opening LinkedIn share...", "info");
+        break;
+      case "twitter":
+        window.open(
+          `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+            text
+          )}&url=${encodeURIComponent(url)}`,
+          "_blank"
+        );
+        showToast("Opening Twitter share...", "info");
+        break;
+      case "email":
+        window.open(
+          `mailto:?subject=${encodeURIComponent(
+            text
+          )}&body=${encodeURIComponent(`${text}\n\n${url}`)}`
+        );
+        showToast("Opening email client...", "info");
+        break;
+    }
+    setShareDialogOpen(false);
   };
 
   return (
@@ -143,11 +231,18 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <img
-                    src={talent.avatar || "/placeholder-user.jpg"}
-                    alt={talent.name}
-                    className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
-                  />
+                  {/* Avatar con fallback de iniciales */}
+                  <Avatar className="w-32 h-32 mx-auto mb-4">
+                    <AvatarImage
+                      src={talent.avatar || undefined}
+                      alt={talent.name}
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="text-4xl font-semibold bg-gray-200 text-gray-700 flex items-center justify-center rounded-full">
+                      {getInitials(talent.name)}
+                    </AvatarFallback>
+                  </Avatar>
+
                   <h1 className="text-2xl font-bold mb-1">{talent.name}</h1>
                   <p className="text-muted-foreground mb-2">
                     {talent.category}
@@ -162,10 +257,18 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
                       <MessageSquare className="w-4 h-4 mr-2" />
                       Contact Talent
                     </Button>
+                    {/* CAMBIO: Aplicar clases condicionales al ícono Heart */}
                     <Button variant="outline" onClick={handleSaveToFavorites}>
-                      <Heart className="w-4 h-4" />
+                      <Heart
+                        className={`w-4 h-4 ${
+                          isFavorited ? "text-red-500 fill-current" : ""
+                        }`}
+                      />
                     </Button>
-                    <Button variant="outline">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShareDialogOpen(true)}
+                    >
                       <Share2 className="w-4 h-4" />
                     </Button>
                   </div>
@@ -373,6 +476,79 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Modal de Chat */}
+      {isChatOpen && (
+        <ChatDialog
+          open={isChatOpen}
+          onOpenChange={setIsChatOpen}
+          recipientName={talent.name}
+          recipientAvatar={talent.avatar || undefined}
+          currentUserId={user?.id || "current-user-mock-id"}
+          currentUserName={user?.name || user?.email || "You"}
+          currentUserAvatar={user?.avatar || undefined}
+        />
+      )}
+
+      {/* Modal de Compartir */}
+      <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Share Portfolio</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-3 bg-muted rounded-lg">
+              <p className="text-sm font-medium mb-2">Portfolio URL:</p>
+              <div className="flex items-center space-x-2">
+                <code className="flex-1 text-xs bg-background p-2 rounded border">
+                  {portfolioUrl}
+                </code>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleShare("copy")}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <Button
+                variant="outline"
+                onClick={() => handleShare("linkedin")}
+                className="justify-start"
+              >
+                <LinkIcon className="h-4 w-4 mr-2" />
+                LinkedIn
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleShare("twitter")}
+                className="justify-start"
+              >
+                <LinkIcon className="h-4 w-4 mr-2" />
+                Twitter
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleShare("email")}
+                className="justify-start"
+              >
+                <LinkIcon className="h-4 w-4 mr-2" />
+                Email
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleShare("copy")}
+                className="justify-start"
+              >
+                <Copy className="h-4 w-4 mr-2" />
+                Copy Link
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }
