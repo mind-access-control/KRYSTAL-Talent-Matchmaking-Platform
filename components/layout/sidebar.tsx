@@ -166,6 +166,8 @@ export function Sidebar() {
                       ? t("nav.aiPreferences")
                       : item.title === "AI Monitor"
                       ? t("nav.aiMonitor")
+                      : item.title === "Social Media"
+                      ? t("nav.socialMedia")
                       : t(`nav.${item.title.toLowerCase()}`)}
                   </Link>
                 </Button>
