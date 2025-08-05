@@ -37,8 +37,23 @@ import {
   Settings,
   ExternalLink,
   Shield,
+  BarChart3,
+  ArrowLeft,
+  Video,
+  Camera,
+  Mic,
+  Play,
+  Radio,
+  Headphones,
+  Smartphone,
+  Monitor,
+  Gamepad2,
+  Palette,
+  PenTool,
+  Code,
 } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import React from "react";
 
 // Lista extensa de redes sociales populares
 const allSocialPlatforms = [
@@ -108,7 +123,7 @@ const allSocialPlatforms = [
   {
     id: "snapchat",
     name: "Snapchat",
-    icon: MessageCircle,
+    icon: Camera,
     color: "text-yellow-500",
     bgColor: "bg-gradient-to-br from-yellow-400 to-yellow-600",
     description: "Multimedia messaging app",
@@ -177,12 +192,121 @@ const allSocialPlatforms = [
     description: "Social networking service",
     category: "Social Media",
   },
+  {
+    id: "onlyfans",
+    name: "OnlyFans",
+    icon: Camera,
+    color: "text-pink-600",
+    bgColor: "bg-gradient-to-br from-pink-500 to-pink-700",
+    description: "Content subscription platform",
+    category: "Content Creation",
+  },
+  {
+    id: "patreon",
+    name: "Patreon",
+    icon: Heart,
+    color: "text-orange-600",
+    bgColor: "bg-gradient-to-br from-orange-500 to-orange-700",
+    description: "Membership platform for creators",
+    category: "Content Creation",
+  },
+  {
+    id: "substack",
+    name: "Substack",
+    icon: MessageSquare,
+    color: "text-blue-600",
+    bgColor: "bg-gradient-to-br from-blue-500 to-blue-700",
+    description: "Newsletter and publishing platform",
+    category: "Content Creation",
+  },
+  {
+    id: "medium",
+    name: "Medium",
+    icon: PenTool,
+    color: "text-green-600",
+    bgColor: "bg-gradient-to-br from-green-500 to-green-700",
+    description: "Online publishing platform",
+    category: "Content Creation",
+  },
+  {
+    id: "behance",
+    name: "Behance",
+    icon: Palette,
+    color: "text-blue-600",
+    bgColor: "bg-gradient-to-br from-blue-500 to-blue-700",
+    description: "Creative portfolio platform",
+    category: "Professional",
+  },
+  {
+    id: "dribbble",
+    name: "Dribbble",
+    icon: Palette,
+    color: "text-pink-600",
+    bgColor: "bg-gradient-to-br from-pink-500 to-pink-700",
+    description: "Design community platform",
+    category: "Professional",
+  },
+  {
+    id: "github",
+    name: "GitHub",
+    icon: Code,
+    color: "text-gray-800 dark:text-white",
+    bgColor: "bg-gradient-to-br from-gray-700 to-gray-900",
+    description: "Code hosting and collaboration",
+    category: "Professional",
+  },
+  {
+    id: "stackoverflow",
+    name: "Stack Overflow",
+    icon: Code,
+    color: "text-orange-600",
+    bgColor: "bg-gradient-to-br from-orange-500 to-orange-700",
+    description: "Developer community platform",
+    category: "Professional",
+  },
+  {
+    id: "clubhouse",
+    name: "Clubhouse",
+    icon: Mic,
+    color: "text-purple-600",
+    bgColor: "bg-gradient-to-br from-purple-500 to-purple-700",
+    description: "Audio-based social platform",
+    category: "Social Media",
+  },
+  {
+    id: "vimeo",
+    name: "Vimeo",
+    icon: Video,
+    color: "text-blue-600",
+    bgColor: "bg-gradient-to-br from-blue-500 to-blue-700",
+    description: "Video sharing platform",
+    category: "Video",
+  },
+  {
+    id: "soundcloud",
+    name: "SoundCloud",
+    icon: Headphones,
+    color: "text-orange-600",
+    bgColor: "bg-gradient-to-br from-orange-500 to-orange-700",
+    description: "Audio distribution platform",
+    category: "Music",
+  },
+  {
+    id: "mixcloud",
+    name: "Mixcloud",
+    icon: Radio,
+    color: "text-purple-600",
+    bgColor: "bg-gradient-to-br from-purple-500 to-purple-700",
+    description: "Audio streaming platform",
+    category: "Music",
+  },
 ];
 
 export default function SocialIntegrations() {
   const { showToast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
 
   const [platforms, setPlatforms] = useState([
     {
@@ -330,6 +454,19 @@ export default function SocialIntegrations() {
         ).toFixed(1)
       : "0.0";
 
+  const selectedPlatformData = selectedPlatform
+    ? platforms.find((p) => p.id === selectedPlatform)
+    : null;
+
+  // Datos para la gráfica de comparación
+  const chartData = connectedPlatforms.map((platform) => ({
+    name: platform.name,
+    followers: platform.metrics?.followers || 0,
+    engagement: platform.metrics?.engagementRate || 0,
+    reach: platform.metrics?.averageReach || 0,
+    color: platform.bgColor,
+  }));
+
   return (
     <DashboardLayout>
       <div className="space-y-8">
@@ -349,204 +486,261 @@ export default function SocialIntegrations() {
           </p>
         </div>
 
-        {/* Overview Stats con iconos llamativos */}
-        <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
-          <CardHeader className="text-center pb-6">
-            <CardTitle className="text-2xl font-bold">
-              Your Social Reach Overview
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <div className="text-center p-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl text-white">
-                <div className="flex justify-center mb-3">
-                  <Users className="h-8 w-8" />
-                </div>
-                <div className="text-3xl font-bold">
-                  {connectedPlatforms.length}
-                </div>
-                <div className="text-blue-100">Connected Platforms</div>
-              </div>
-              <div className="text-center p-6 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl text-white">
-                <div className="flex justify-center mb-3">
-                  <Eye className="h-8 w-8" />
-                </div>
-                <div className="text-3xl font-bold">
-                  {totalFollowers.toLocaleString()}
-                </div>
-                <div className="text-green-100">Total Followers</div>
-              </div>
-              <div className="text-center p-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl text-white">
-                <div className="flex justify-center mb-3">
-                  <TrendingUp className="h-8 w-8" />
-                </div>
-                <div className="text-3xl font-bold">{avgEngagement}%</div>
-                <div className="text-purple-100">Avg Engagement</div>
-              </div>
-              <div className="text-center p-6 bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl text-white">
-                <div className="flex justify-center mb-3">
-                  <Heart className="h-8 w-8" />
-                </div>
-                <div className="text-3xl font-bold">
-                  {connectedPlatforms
-                    .reduce((sum, p) => sum + (p.metrics?.averageReach || 0), 0)
-                    .toLocaleString()}
-                </div>
-                <div className="text-pink-100">Total Reach</div>
-              </div>
-            </div>
-
-            {/* Iconos de redes conectadas */}
-            {connectedPlatforms.length > 0 && (
-              <div className="text-center">
-                <h3 className="text-lg font-semibold mb-4">
-                  Your Connected Networks
-                </h3>
-                <div className="flex flex-wrap justify-center gap-4">
-                  {connectedPlatforms.map((platform) => {
-                    const IconComponent = platform.icon;
-                    return (
-                      <div
-                        key={platform.id}
-                        className={`p-4 rounded-2xl ${platform.bgColor} text-white shadow-lg hover:scale-105 transition-transform cursor-pointer`}
-                        onClick={() => handleSync(platform.id)}
-                      >
-                        <IconComponent className="h-8 w-8" />
-                        <div className="text-xs mt-1 font-medium">
-                          {platform.name}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Plataformas conectadas */}
+        {/* Iconos de redes conectadas en la parte superior */}
         {connectedPlatforms.length > 0 && (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold flex items-center space-x-2">
-              <CheckCircle className="h-6 w-6 text-green-500" />
-              <span>Connected Platforms</span>
-            </h2>
-            <div className="grid gap-4">
-              {connectedPlatforms.map((platform) => {
-                const IconComponent = platform.icon;
-                return (
-                  <Card
-                    key={platform.id}
-                    className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-green-500"
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+            <CardHeader className="text-center pb-4">
+              <CardTitle className="text-lg font-semibold flex items-center justify-center space-x-2">
+                <BarChart3 className="h-5 w-5 text-blue-500" />
+                <span>Your Connected Networks</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap justify-center gap-4">
+                {connectedPlatforms.map((platform) => {
+                  const IconComponent = platform.icon;
+                  const isSelected = selectedPlatform === platform.id;
+                  return (
+                    <div
+                      key={platform.id}
+                      className={`p-4 rounded-2xl ${
+                        platform.bgColor
+                      } text-white shadow-lg transition-all duration-300 cursor-pointer ${
+                        isSelected
+                          ? "ring-4 ring-blue-300 scale-110"
+                          : "hover:scale-105"
+                      }`}
+                      onClick={() => setSelectedPlatform(platform.id)}
+                    >
+                      <IconComponent className="h-8 w-8" />
+                      <div className="text-xs mt-1 font-medium">
+                        {platform.name}
+                      </div>
+                      {isSelected && (
+                        <div className="text-xs mt-1 opacity-80">Selected</div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Vista de métricas específicas de una plataforma */}
+        {selectedPlatformData && selectedPlatformData.metrics && (
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedPlatform(null)}
                   >
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div
-                            className={`p-3 rounded-xl ${platform.bgColor} text-white shadow-lg`}
-                          >
-                            <IconComponent className="h-8 w-8" />
-                          </div>
-                          <div>
-                            <CardTitle className="text-xl">
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back to Overview
+                  </Button>
+                  <div className="flex items-center space-x-3">
+                    <div
+                      className={`p-3 rounded-xl ${selectedPlatformData.bgColor} text-white shadow-lg`}
+                    >
+                      {React.createElement(selectedPlatformData.icon, {
+                        className: "h-8 w-8",
+                      })}
+                    </div>
+                    <div>
+                      <CardTitle className="text-2xl">
+                        {selectedPlatformData.name} Metrics
+                      </CardTitle>
+                      <p className="text-muted-foreground">
+                        Detailed performance data for this platform
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleSync(selectedPlatformData.id)}
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Sync Now
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                <div className="text-center p-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl text-white">
+                  <div className="flex justify-center mb-3">
+                    <Users className="h-8 w-8" />
+                  </div>
+                  <div className="text-3xl font-bold">
+                    {selectedPlatformData.metrics.followers.toLocaleString()}
+                  </div>
+                  <div className="text-blue-100">Followers</div>
+                </div>
+                <div className="text-center p-6 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl text-white">
+                  <div className="flex justify-center mb-3">
+                    <TrendingUp className="h-8 w-8" />
+                  </div>
+                  <div className="text-3xl font-bold">
+                    {selectedPlatformData.metrics.engagementRate}%
+                  </div>
+                  <div className="text-green-100">Engagement Rate</div>
+                </div>
+                <div className="text-center p-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl text-white">
+                  <div className="flex justify-center mb-3">
+                    <Eye className="h-8 w-8" />
+                  </div>
+                  <div className="text-3xl font-bold">
+                    {selectedPlatformData.metrics.averageReach.toLocaleString()}
+                  </div>
+                  <div className="text-purple-100">Average Reach</div>
+                </div>
+                <div className="text-center p-6 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl text-white">
+                  <div className="flex justify-center mb-3">
+                    <RefreshCw className="h-8 w-8" />
+                  </div>
+                  <div className="text-lg font-bold">
+                    {selectedPlatformData.metrics.lastSync}
+                  </div>
+                  <div className="text-orange-100">Last Sync</div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-4 border-t">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id={`auto-sync-${selectedPlatformData.id}`}
+                    checked={selectedPlatformData.autoSync}
+                    onCheckedChange={(checked) =>
+                      handleAutoSyncToggle(selectedPlatformData.id, checked)
+                    }
+                  />
+                  <Label
+                    htmlFor={`auto-sync-${selectedPlatformData.id}`}
+                    className="text-sm"
+                  >
+                    Auto-sync metrics daily
+                  </Label>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDisconnect(selectedPlatformData.id)}
+                >
+                  Disconnect
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Overview Stats con iconos llamativos - solo se muestra cuando no hay plataforma seleccionada */}
+        {!selectedPlatform && (
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+            <CardHeader className="text-center pb-6">
+              <CardTitle className="text-2xl font-bold">
+                Your Social Reach Overview
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div className="text-center p-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl text-white">
+                  <div className="flex justify-center mb-3">
+                    <Users className="h-8 w-8" />
+                  </div>
+                  <div className="text-3xl font-bold">
+                    {connectedPlatforms.length}
+                  </div>
+                  <div className="text-blue-100">Connected Platforms</div>
+                </div>
+                <div className="text-center p-6 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl text-white">
+                  <div className="flex justify-center mb-3">
+                    <Eye className="h-8 w-8" />
+                  </div>
+                  <div className="text-3xl font-bold">
+                    {totalFollowers.toLocaleString()}
+                  </div>
+                  <div className="text-green-100">Total Followers</div>
+                </div>
+                <div className="text-center p-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl text-white">
+                  <div className="flex justify-center mb-3">
+                    <TrendingUp className="h-8 w-8" />
+                  </div>
+                  <div className="text-3xl font-bold">{avgEngagement}%</div>
+                  <div className="text-purple-100">Avg Engagement</div>
+                </div>
+                <div className="text-center p-6 bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl text-white">
+                  <div className="flex justify-center mb-3">
+                    <Heart className="h-8 w-8" />
+                  </div>
+                  <div className="text-3xl font-bold">
+                    {connectedPlatforms
+                      .reduce(
+                        (sum, p) => sum + (p.metrics?.averageReach || 0),
+                        0
+                      )
+                      .toLocaleString()}
+                  </div>
+                  <div className="text-pink-100">Total Reach</div>
+                </div>
+              </div>
+
+              {/* Gráfica de comparación de redes */}
+              {connectedPlatforms.length > 1 && (
+                <div className="mt-8">
+                  <h3 className="text-lg font-semibold mb-4 text-center">
+                    Platform Comparison
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {chartData.map((platform) => (
+                      <Card
+                        key={platform.name}
+                        className="hover:shadow-lg transition-shadow"
+                      >
+                        <CardHeader className="pb-3">
+                          <div className="flex items-center space-x-2">
+                            <div
+                              className={`w-4 h-4 rounded ${platform.color}`}
+                            ></div>
+                            <CardTitle className="text-sm">
                               {platform.name}
                             </CardTitle>
-                            <div className="flex items-center space-x-2 mt-1">
-                              <CheckCircle className="h-4 w-4 text-green-500" />
-                              <Badge
-                                variant="secondary"
-                                className="text-green-600 bg-green-50"
-                              >
-                                Connected
-                              </Badge>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span>Followers:</span>
+                              <span className="font-semibold">
+                                {platform.followers.toLocaleString()}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span>Engagement:</span>
+                              <span className="font-semibold">
+                                {platform.engagement}%
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span>Reach:</span>
+                              <span className="font-semibold">
+                                {platform.reach.toLocaleString()}
+                              </span>
                             </div>
                           </div>
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleSync(platform.id)}
-                          >
-                            <RefreshCw className="h-4 w-4 mr-2" />
-                            Sync
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDisconnect(platform.id)}
-                          >
-                            Disconnect
-                          </Button>
-                        </div>
-                      </div>
-                    </CardHeader>
-
-                    {platform.metrics && (
-                      <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                          <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20 rounded-xl">
-                            <div className="text-xl font-bold text-blue-600">
-                              {platform.metrics.followers.toLocaleString()}
-                            </div>
-                            <div className="text-xs text-blue-600/70">
-                              Followers
-                            </div>
-                          </div>
-                          <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/20 rounded-xl">
-                            <div className="text-xl font-bold text-green-600">
-                              {platform.metrics.engagementRate}%
-                            </div>
-                            <div className="text-xs text-green-600/70">
-                              Engagement Rate
-                            </div>
-                          </div>
-                          <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/20 dark:to-purple-900/20 rounded-xl">
-                            <div className="text-xl font-bold text-purple-600">
-                              {platform.metrics.averageReach.toLocaleString()}
-                            </div>
-                            <div className="text-xs text-purple-600/70">
-                              Average Reach
-                            </div>
-                          </div>
-                          <div className="text-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/20 dark:to-orange-900/20 rounded-xl">
-                            <div className="text-lg font-bold text-orange-600">
-                              {platform.metrics.lastSync}
-                            </div>
-                            <div className="text-xs text-orange-600/70">
-                              Last Sync
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center justify-between pt-4 border-t">
-                          <div className="flex items-center space-x-2">
-                            <Switch
-                              id={`auto-sync-${platform.id}`}
-                              checked={platform.autoSync}
-                              onCheckedChange={(checked) =>
-                                handleAutoSyncToggle(platform.id, checked)
-                              }
-                            />
-                            <Label
-                              htmlFor={`auto-sync-${platform.id}`}
-                              className="text-sm"
-                            >
-                              Auto-sync metrics daily
-                            </Label>
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            Last updated: {platform.metrics.lastSync}
-                          </div>
-                        </div>
-                      </CardContent>
-                    )}
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         )}
 
         {/* Conectar nuevas plataformas */}
