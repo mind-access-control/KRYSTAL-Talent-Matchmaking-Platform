@@ -5,6 +5,7 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +25,55 @@ import {
   FileText,
   ImageIcon,
   LinkIcon,
+  ChevronLeft,
+  ChevronRight,
+  Maximize2,
+  Heart,
+  Eye,
+  MessageSquare,
+  Calendar,
+  DollarSign,
+  Award,
+  Crown,
+  Sparkles,
+  Brain,
+  Target,
+  Zap,
+  Users,
+  Globe,
+  Camera,
+  Video,
+  Palette,
+  Settings,
+  Plus,
+  Search,
+  Filter,
+  Grid,
+  List,
+  RotateCcw,
+  Sparkle,
+  Trophy,
+  TrendingDown,
+  Activity,
+  PieChart,
+  LineChart,
+  CheckCircle,
+  AlertCircle,
+  Lightbulb,
+  Briefcase,
+  Clock,
+  Tag,
+  Hash,
+  Instagram,
+  Twitter,
+  Linkedin,
+  Youtube,
+  Facebook,
+  MessageCircle,
+  Send,
+  Phone,
+  Mail,
+  Globe as GlobeIcon,
 } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 import { ChatDialog } from "@/components/ui/chat-dialog";
@@ -35,13 +85,16 @@ export default function PortfolioPreview() {
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [isPublicView, setIsPublicView] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showFullscreen, setShowFullscreen] = useState(false);
 
   const talent = {
     name: "Sofia Rodriguez",
     category: "Fashion Model",
     location: "Los Angeles, CA",
-    avatar: "/placeholder-user.jpg",
-    bio: "Professional fashion model with 5+ years of experience in commercial and editorial photography. I specialize in lifestyle and beauty campaigns, bringing authenticity and creativity to every project.",
+    avatar:
+      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=400&fit=crop&crop=face",
+    bio: "Professional fashion model with 5+ years of experience in commercial and editorial photography. I specialize in lifestyle and beauty campaigns, bringing authenticity and creativity to every project. My work has been featured in Vogue, Elle, and Harper's Bazaar, and I've collaborated with luxury brands including Chanel, Dior, and Gucci.",
     skills: [
       "Fashion Photography",
       "Commercial Modeling",
@@ -49,9 +102,12 @@ export default function PortfolioPreview() {
       "Beauty",
       "Lifestyle",
       "Runway",
+      "High Fashion",
+      "Luxury Brands",
+      "International Markets",
     ],
     languages: ["English", "Spanish", "French"],
-    rates: 500,
+    rates: 2500,
     socialMetrics: {
       instagram: { followers: 150000, engagementRate: 4.5 },
       tiktok: { followers: 89000, engagementRate: 6.2 },
@@ -61,40 +117,103 @@ export default function PortfolioPreview() {
       {
         id: "1",
         type: "photo",
-        url: "/placeholder.jpg",
-        description: "Editorial fashion shoot for Vogue",
+        url: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=1200&h=1600&fit=crop&crop=face",
+        description:
+          "Editorial fashion shoot for Vogue - High fashion editorial showcasing versatility and professional modeling skills",
+        category: "Editorial",
+        tags: ["vogue", "editorial", "high-fashion", "professional"],
+        aiScore: 95,
+        views: 1250,
+        likes: 89,
       },
       {
         id: "2",
         type: "photo",
-        url: "/placeholder.jpg",
-        description: "Commercial campaign for luxury brand",
+        url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=1600&fit=crop&crop=face",
+        description:
+          "Commercial campaign for luxury brand - Lifestyle photography demonstrating brand alignment and market appeal",
+        category: "Commercial",
+        tags: ["luxury", "commercial", "lifestyle", "brand"],
+        aiScore: 92,
+        views: 980,
+        likes: 76,
       },
       {
         id: "3",
         type: "video",
-        url: "/placeholder.jpg",
-        description: "Behind the scenes fashion video",
+        url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1200&h=1600&fit=crop&crop=face",
+        description:
+          "Behind the scenes fashion video - Dynamic content showing personality and behind-the-scenes authenticity",
+        category: "Behind Scenes",
+        tags: ["video", "behind-scenes", "authentic", "personality"],
+        aiScore: 88,
+        views: 2100,
+        likes: 94,
       },
       {
         id: "4",
         type: "photo",
-        url: "/placeholder.jpg",
-        description: "Beauty campaign for cosmetics brand",
+        url: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=1200&h=1600&fit=crop&crop=face",
+        description:
+          "Beauty campaign for cosmetics brand - Close-up beauty photography highlighting natural features and makeup skills",
+        category: "Beauty",
+        tags: ["beauty", "cosmetics", "close-up", "makeup"],
+        aiScore: 96,
+        views: 1560,
+        likes: 82,
       },
       {
         id: "5",
         type: "photo",
-        url: "/placeholder.jpg",
-        description: "Lifestyle brand collaboration",
+        url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=1200&h=1600&fit=crop&crop=face",
+        description:
+          "Lifestyle brand collaboration - Authentic lifestyle content perfect for wellness and lifestyle brands",
+        category: "Lifestyle",
+        tags: ["lifestyle", "wellness", "authentic", "natural"],
+        aiScore: 90,
+        views: 890,
+        likes: 78,
       },
       {
         id: "6",
         type: "photo",
-        url: "/placeholder.jpg",
-        description: "Artistic portrait session",
+        url: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=1200&h=1600&fit=crop&crop=face",
+        description:
+          "Artistic portrait session - Creative photography demonstrating artistic range and creative collaboration",
+        category: "Artistic",
+        tags: ["artistic", "creative", "portrait", "artistic"],
+        aiScore: 87,
+        views: 720,
+        likes: 71,
       },
     ],
+    measurements: {
+      height: "5'9\"",
+      bust: "32B",
+      waist: '24"',
+      hips: '34"',
+      shoes: "8 US",
+      eyes: "Green",
+      hair: "Dark Blonde",
+    },
+    experience: {
+      years: 5,
+      campaigns: 45,
+      magazines: 12,
+      brands: 28,
+    },
+    aiAnalysis: {
+      overallScore: 94,
+      marketFit: 96,
+      brandAlignment: 98,
+      technicalQuality: 92,
+      recommendations: [
+        "Perfect for luxury fashion campaigns",
+        "Excellent editorial potential",
+        "Strong commercial appeal",
+        "Ideal for beauty and lifestyle brands",
+      ],
+    },
   };
 
   const portfolioUrl = `https://krystal.talent/portfolio/${talent.name
@@ -147,11 +266,7 @@ export default function PortfolioPreview() {
           "Generating PDF export... Download will start shortly.",
           "success"
         );
-        // Simulate PDF generation
         setTimeout(() => {
-          const link = document.createElement("a");
-          link.href = "#";
-          link.download = `${talent.name.replace(" ", "_")}_Portfolio.pdf`;
           showToast("PDF export ready for download!", "success");
         }, 2000);
         break;
@@ -196,9 +311,23 @@ export default function PortfolioPreview() {
     setChatOpen(true);
   };
 
+  const nextImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev === talent.portfolio.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? talent.portfolio.length - 1 : prev - 1
+    );
+  };
+
+  const currentImage = talent.portfolio[currentImageIndex];
+
   return (
     <DashboardLayout>
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -248,38 +377,291 @@ export default function PortfolioPreview() {
           </div>
         </div>
 
-        {/* Profile Header */}
-        <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-32"></div>
-          <CardContent className="relative pt-0">
-            {" "}
-            {/* pt-20 para bajar el contenido */}
-            <div className="flex flex-col md:flex-row items-start md:items-end space-y-4 md:space-y-0 md:space-x-6 -mt-16">
-              <img
-                src={talent.avatar || "/placeholder-user.jpg"}
-                alt={talent.name}
-                className="w-32 h-32 rounded-full border-4 border-white object-cover shadow-lg"
-                style={{ marginTop: "-4rem" }} // sobresale el avatar
-              />
-              <div className="flex-1 md:pb-4">
-                <h1 className="text-3xl font-bold mb-2">{talent.name}</h1>
+        {/* Hero Section - LA Models Style */}
+        <div className="relative h-[80vh] bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl overflow-hidden">
+          {/* Background Image */}
+          <div className="absolute inset-0">
+            <img
+              src={currentImage.url}
+              alt={currentImage.description}
+              className="w-full h-full object-cover opacity-40"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+          </div>
 
-                <p className="text-xl font-bold mb-2">{talent.category}</p>
-                <div className="flex items-center text-muted-foreground mb-4">
-                  <MapPin className="w-4 h-4 mr-1" />
-                  {talent.location}
-                </div>
-                <div className="flex items-center space-x-6 text-sm">
-                  <div className="flex items-center">
-                    <Star className="w-4 h-4 text-yellow-500 fill-current mr-1" />
-                    <span className="font-medium">4.9</span>
-                    <span className="text-muted-foreground ml-1">
-                      (24 reviews)
-                    </span>
+          {/* Navigation Arrows */}
+          <button
+            onClick={prevImage}
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 z-10"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          <button
+            onClick={nextImage}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 z-10"
+          >
+            <ChevronRight className="h-6 w-6" />
+          </button>
+
+          {/* Main Content */}
+          <div className="relative z-10 h-full flex items-end p-8">
+            <div className="flex items-end space-x-8 w-full">
+              {/* Model Info */}
+              <div className="flex-1 text-white">
+                <h1 className="text-6xl font-bold mb-4 tracking-tight">
+                  {talent.name.toUpperCase()}
+                </h1>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-6">
+                  <div>
+                    <span className="text-gray-300">Height:</span>
+                    <div className="font-semibold">
+                      {talent.measurements.height}
+                    </div>
                   </div>
                   <div>
-                    <span className="font-medium">${talent.rates}</span>
-                    <span className="text-muted-foreground">/day</span>
+                    <span className="text-gray-300">Bust:</span>
+                    <div className="font-semibold">
+                      {talent.measurements.bust}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-300">Waist:</span>
+                    <div className="font-semibold">
+                      {talent.measurements.waist}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-300">Hips:</span>
+                    <div className="font-semibold">
+                      {talent.measurements.hips}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-300">Shoes:</span>
+                    <div className="font-semibold">
+                      {talent.measurements.shoes}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-300">Eyes:</span>
+                    <div className="font-semibold">
+                      {talent.measurements.eyes}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-300">Hair:</span>
+                    <div className="font-semibold">
+                      {talent.measurements.hair}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-gray-300">Rate:</span>
+                    <div className="font-semibold">${talent.rates}/day</div>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <Button
+                    size="lg"
+                    onClick={handleContactTalent}
+                    className="bg-white text-black hover:bg-gray-100"
+                  >
+                    <MessageSquare className="h-5 w-5 mr-2" />
+                    Contact {talent.name}
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-white text-white hover:bg-white/10"
+                  >
+                    <Download className="h-5 w-5 mr-2" />
+                    Download Portfolio
+                  </Button>
+                </div>
+              </div>
+
+              {/* Current Image Info */}
+              <div className="text-white text-right max-w-md">
+                <div className="bg-black/50 backdrop-blur-sm rounded-lg p-4 mb-4">
+                  <h3 className="font-semibold mb-2">
+                    {currentImage.category}
+                  </h3>
+                  <p className="text-sm text-gray-300 mb-3">
+                    {currentImage.description}
+                  </p>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="flex items-center">
+                      <Eye className="h-3 w-3 mr-1" />
+                      {currentImage.views}
+                    </span>
+                    <span className="flex items-center">
+                      <Heart className="h-3 w-3 mr-1" />
+                      {currentImage.likes}%
+                    </span>
+                    <Badge
+                      className={`${
+                        currentImage.aiScore >= 90
+                          ? "bg-green-500"
+                          : currentImage.aiScore >= 80
+                          ? "bg-yellow-500"
+                          : "bg-red-500"
+                      } text-white`}
+                    >
+                      {currentImage.aiScore}/100
+                    </Badge>
+                  </div>
+                </div>
+                <div className="text-sm text-gray-300">
+                  {currentImageIndex + 1} of {talent.portfolio.length}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Fullscreen Button */}
+          <button
+            onClick={() => setShowFullscreen(true)}
+            className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 z-10"
+          >
+            <Maximize2 className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Portfolio Thumbnails */}
+        <div className="flex space-x-4 overflow-x-auto pb-4">
+          {talent.portfolio.map((item, index) => (
+            <button
+              key={item.id}
+              onClick={() => setCurrentImageIndex(index)}
+              className={`flex-shrink-0 w-32 h-48 rounded-lg overflow-hidden transition-all duration-300 ${
+                index === currentImageIndex
+                  ? "ring-4 ring-blue-500 scale-105"
+                  : "hover:scale-105"
+              }`}
+            >
+              <img
+                src={item.url}
+                alt={item.description}
+                className="w-full h-full object-cover"
+              />
+            </button>
+          ))}
+        </div>
+
+        {/* AI Analysis Section */}
+        <Card className="border-0 shadow-xl bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20">
+          <CardContent className="p-8">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-3 bg-blue-500 rounded-full">
+                <Brain className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold">AI Portfolio Analysis</h2>
+                <p className="text-muted-foreground">
+                  Intelligent insights powered by advanced AI
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+              <div className="text-center p-6 bg-white rounded-xl shadow-lg">
+                <div className="text-4xl font-bold text-blue-600 mb-2">
+                  {talent.aiAnalysis.overallScore}/100
+                </div>
+                <div className="text-sm font-medium text-gray-600">
+                  Overall Score
+                </div>
+                <Progress
+                  value={talent.aiAnalysis.overallScore}
+                  className="mt-3"
+                />
+              </div>
+              <div className="text-center p-6 bg-white rounded-xl shadow-lg">
+                <div className="text-4xl font-bold text-green-600 mb-2">
+                  {talent.aiAnalysis.marketFit}%
+                </div>
+                <div className="text-sm font-medium text-gray-600">
+                  Market Fit
+                </div>
+                <Progress
+                  value={talent.aiAnalysis.marketFit}
+                  className="mt-3"
+                />
+              </div>
+              <div className="text-center p-6 bg-white rounded-xl shadow-lg">
+                <div className="text-4xl font-bold text-purple-600 mb-2">
+                  {talent.aiAnalysis.brandAlignment}%
+                </div>
+                <div className="text-sm font-medium text-gray-600">
+                  Brand Alignment
+                </div>
+                <Progress
+                  value={talent.aiAnalysis.brandAlignment}
+                  className="mt-3"
+                />
+              </div>
+              <div className="text-center p-6 bg-white rounded-xl shadow-lg">
+                <div className="text-4xl font-bold text-orange-600 mb-2">
+                  {talent.aiAnalysis.technicalQuality}%
+                </div>
+                <div className="text-sm font-medium text-gray-600">
+                  Technical Quality
+                </div>
+                <Progress
+                  value={talent.aiAnalysis.technicalQuality}
+                  className="mt-3"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-4 flex items-center">
+                  <Lightbulb className="h-5 w-5 mr-2 text-blue-500" />
+                  AI Recommendations
+                </h3>
+                <div className="space-y-3">
+                  {talent.aiAnalysis.recommendations.map((rec, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start p-3 bg-white rounded-lg shadow"
+                    >
+                      <Sparkles className="h-4 w-4 text-blue-500 mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm">{rec}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-4 flex items-center">
+                  <Trophy className="h-5 w-5 mr-2 text-green-500" />
+                  Experience Highlights
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-4 bg-white rounded-lg shadow">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {talent.experience.years}+
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Years Experience
+                    </div>
+                  </div>
+                  <div className="text-center p-4 bg-white rounded-lg shadow">
+                    <div className="text-2xl font-bold text-green-600">
+                      {talent.experience.campaigns}
+                    </div>
+                    <div className="text-sm text-gray-600">Campaigns</div>
+                  </div>
+                  <div className="text-center p-4 bg-white rounded-lg shadow">
+                    <div className="text-2xl font-bold text-purple-600">
+                      {talent.experience.magazines}
+                    </div>
+                    <div className="text-sm text-gray-600">Magazines</div>
+                  </div>
+                  <div className="text-center p-4 bg-white rounded-lg shadow">
+                    <div className="text-2xl font-bold text-orange-600">
+                      {talent.experience.brands}
+                    </div>
+                    <div className="text-sm text-gray-600">Brands</div>
                   </div>
                 </div>
               </div>
@@ -290,24 +672,36 @@ export default function PortfolioPreview() {
         {/* About & Skills */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <Card>
-              <CardContent className="pt-6">
-                <h3 className="text-lg font-semibold mb-3">About</h3>
-                <p className="text-muted-foreground mb-4">{talent.bio}</p>
+            <Card className="border-0 shadow-xl">
+              <CardContent className="p-8">
+                <h3 className="text-2xl font-bold mb-6">About {talent.name}</h3>
+                <p className="text-muted-foreground mb-6 leading-relaxed">
+                  {talent.bio}
+                </p>
 
-                <h4 className="font-medium mb-2">Skills & Expertise</h4>
-                <div className="flex flex-wrap gap-2 mb-4">
+                <h4 className="font-semibold text-lg mb-4">
+                  Skills & Expertise
+                </h4>
+                <div className="flex flex-wrap gap-3 mb-6">
                   {talent.skills.map((skill) => (
-                    <Badge key={skill} variant="secondary">
+                    <Badge
+                      key={skill}
+                      variant="secondary"
+                      className="px-4 py-2"
+                    >
                       {skill}
                     </Badge>
                   ))}
                 </div>
 
-                <h4 className="font-medium mb-2">Languages</h4>
-                <div className="flex flex-wrap gap-2">
+                <h4 className="font-semibold text-lg mb-4">Languages</h4>
+                <div className="flex flex-wrap gap-3">
                   {talent.languages.map((language) => (
-                    <Badge key={language} variant="outline">
+                    <Badge
+                      key={language}
+                      variant="outline"
+                      className="px-4 py-2"
+                    >
                       {language}
                     </Badge>
                   ))}
@@ -316,19 +710,23 @@ export default function PortfolioPreview() {
             </Card>
           </div>
 
-          <div>
-            <Card>
-              <CardContent className="pt-6">
-                <h3 className="text-lg font-semibold mb-4">
+          <div className="space-y-6">
+            <Card className="border-0 shadow-xl">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center">
+                  <TrendingUp className="h-5 w-5 mr-2 text-green-500" />
                   Social Media Reach
                 </h3>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-pink-50 dark:bg-pink-950/20 rounded-lg">
-                    <div>
-                      <div className="font-medium">Instagram</div>
-                      <div className="text-sm text-muted-foreground">
-                        {talent.socialMetrics.instagram.followers.toLocaleString()}{" "}
-                        followers
+                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-pink-500 to-purple-500 rounded-lg text-white">
+                    <div className="flex items-center">
+                      <Instagram className="h-5 w-5 mr-3" />
+                      <div>
+                        <div className="font-medium">Instagram</div>
+                        <div className="text-sm opacity-90">
+                          {talent.socialMetrics.instagram.followers.toLocaleString()}{" "}
+                          followers
+                        </div>
                       </div>
                     </div>
                     <div className="text-right">
@@ -339,12 +737,15 @@ export default function PortfolioPreview() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-950/20 rounded-lg">
-                    <div>
-                      <div className="font-medium">TikTok</div>
-                      <div className="text-sm text-muted-foreground">
-                        {talent.socialMetrics.tiktok.followers.toLocaleString()}{" "}
-                        followers
+                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-800 to-black rounded-lg text-white">
+                    <div className="flex items-center">
+                      <MessageCircle className="h-5 w-5 mr-3" />
+                      <div>
+                        <div className="font-medium">TikTok</div>
+                        <div className="text-sm opacity-90">
+                          {talent.socialMetrics.tiktok.followers.toLocaleString()}{" "}
+                          followers
+                        </div>
                       </div>
                     </div>
                     <div className="text-right">
@@ -355,12 +756,15 @@ export default function PortfolioPreview() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-950/20 rounded-lg">
-                    <div>
-                      <div className="font-medium">YouTube</div>
-                      <div className="text-sm text-muted-foreground">
-                        {talent.socialMetrics.youtube.followers.toLocaleString()}{" "}
-                        subscribers
+                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-white">
+                    <div className="flex items-center">
+                      <Youtube className="h-5 w-5 mr-3" />
+                      <div>
+                        <div className="font-medium">YouTube</div>
+                        <div className="text-sm opacity-90">
+                          {talent.socialMetrics.youtube.followers.toLocaleString()}{" "}
+                          subscribers
+                        </div>
                       </div>
                     </div>
                     <div className="text-right">
@@ -373,57 +777,151 @@ export default function PortfolioPreview() {
                 </div>
               </CardContent>
             </Card>
+
+            <Card className="border-0 shadow-xl">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center">
+                  <Award className="h-5 w-5 mr-2 text-yellow-500" />
+                  Quick Stats
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">
+                      Rating
+                    </span>
+                    <div className="flex items-center">
+                      <Star className="h-4 w-4 text-yellow-500 fill-current mr-1" />
+                      <span className="font-semibold">4.9</span>
+                      <span className="text-sm text-muted-foreground ml-1">
+                        (24 reviews)
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">
+                      Response Time
+                    </span>
+                    <span className="font-semibold text-green-600">
+                      2 hours
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">
+                      Availability
+                    </span>
+                    <span className="font-semibold text-blue-600">
+                      This Week
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">
+                      Location
+                    </span>
+                    <span className="font-semibold">{talent.location}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
 
-        {/* Portfolio Gallery */}
-        <Card>
-          <CardContent className="pt-6">
-            <h3 className="text-lg font-semibold mb-4">
-              Portfolio ({talent.portfolio.length} items)
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {talent.portfolio.map((item) => (
-                <div key={item.id} className="group cursor-pointer">
-                  <div className="aspect-square rounded-lg overflow-hidden bg-muted mb-3 relative">
-                    <img
-                      src={item.url || "/placeholder.jpg"}
-                      alt={item.description}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    {item.type === "video" && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="bg-black/50 rounded-full p-3 group-hover:bg-black/70 transition-colors">
-                          <Play className="h-6 w-6 text-white" />
-                        </div>
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"></div>
-                  </div>
-                  <p className="text-sm font-medium line-clamp-2">
-                    {item.description}
-                  </p>
-                </div>
-              ))}
+        {/* Contact CTA */}
+        <Card className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 shadow-xl">
+          <CardContent className="p-8 text-center">
+            <h3 className="text-3xl font-bold mb-4">Ready to work together?</h3>
+            <p className="text-xl opacity-90 mb-6 max-w-2xl mx-auto">
+              Get in touch to discuss your next project and see how we can
+              create something amazing together.
+            </p>
+            <div className="flex items-center justify-center space-x-4">
+              <Button
+                size="lg"
+                onClick={handleContactTalent}
+                className="bg-white text-purple-600 hover:bg-gray-100"
+              >
+                <MessageSquare className="h-5 w-5 mr-2" />
+                Contact {talent.name}
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white/10"
+              >
+                <Phone className="h-5 w-5 mr-2" />
+                Call Now
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white/10"
+              >
+                <Mail className="h-5 w-5 mr-2" />
+                Email
+              </Button>
             </div>
           </CardContent>
         </Card>
 
-        {/* Contact CTA */}
-        <Card className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20">
-          <CardContent className="pt-6 text-center">
-            <h3 className="text-xl font-semibold mb-2">
-              Ready to work together?
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              Get in touch to discuss your next project and see how we can
-              create something amazing together.
-            </p>
-            <Button size="lg" onClick={handleContactTalent}>
-              Contact {talent.name}
-            </Button>
-          </CardContent>
-        </Card>
+        {/* Fullscreen Image Modal */}
+        <Dialog open={showFullscreen} onOpenChange={setShowFullscreen}>
+          <DialogContent className="max-w-7xl max-h-[90vh] p-0">
+            <div className="relative">
+              <img
+                src={currentImage.url}
+                alt={currentImage.description}
+                className="w-full h-full object-contain"
+              />
+              <div className="absolute top-4 right-4 flex space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={prevImage}
+                  className="bg-black/50 border-white text-white hover:bg-black/70"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={nextImage}
+                  className="bg-black/50 border-white text-white hover:bg-black/70"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="absolute bottom-4 left-4 right-4 bg-black/70 backdrop-blur-sm rounded-lg p-4 text-white">
+                <h3 className="font-semibold mb-2">{currentImage.category}</h3>
+                <p className="text-sm opacity-90">{currentImage.description}</p>
+                <div className="flex items-center justify-between mt-3 text-sm">
+                  <span>
+                    {currentImageIndex + 1} of {talent.portfolio.length}
+                  </span>
+                  <div className="flex items-center space-x-4">
+                    <span className="flex items-center">
+                      <Eye className="h-3 w-3 mr-1" />
+                      {currentImage.views}
+                    </span>
+                    <span className="flex items-center">
+                      <Heart className="h-3 w-3 mr-1" />
+                      {currentImage.likes}%
+                    </span>
+                    <Badge
+                      className={`${
+                        currentImage.aiScore >= 90
+                          ? "bg-green-500"
+                          : currentImage.aiScore >= 80
+                          ? "bg-yellow-500"
+                          : "bg-red-500"
+                      } text-white`}
+                    >
+                      {currentImage.aiScore}/100
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Share Dialog */}
         <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
@@ -453,7 +951,7 @@ export default function PortfolioPreview() {
                   onClick={() => handleShare("linkedin")}
                   className="justify-start"
                 >
-                  <LinkIcon className="h-4 w-4 mr-2" />
+                  <Linkedin className="h-4 w-4 mr-2" />
                   LinkedIn
                 </Button>
                 <Button
@@ -461,7 +959,7 @@ export default function PortfolioPreview() {
                   onClick={() => handleShare("twitter")}
                   className="justify-start"
                 >
-                  <LinkIcon className="h-4 w-4 mr-2" />
+                  <Twitter className="h-4 w-4 mr-2" />
                   Twitter
                 </Button>
                 <Button
@@ -469,7 +967,7 @@ export default function PortfolioPreview() {
                   onClick={() => handleShare("email")}
                   className="justify-start"
                 >
-                  <LinkIcon className="h-4 w-4 mr-2" />
+                  <Mail className="h-4 w-4 mr-2" />
                   Email
                 </Button>
                 <Button
