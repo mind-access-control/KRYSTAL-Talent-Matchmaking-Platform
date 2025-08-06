@@ -64,6 +64,7 @@ import {
   Activity,
   PieChart,
   LineChart,
+  Loader2,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import Link from "next/link";
@@ -106,14 +107,23 @@ export default function TalentPortfolio() {
   const { toast } = useToast();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadDescription, setUploadDescription] = useState("");
+  const [uploadCategory, setUploadCategory] = useState("Commercial");
   const [editingItem, setEditingItem] = useState<MediaItem | null>(null);
   const [editDescription, setEditDescription] = useState("");
+  const [editImageFile, setEditImageFile] = useState<File | null>(null);
+  const [editPreviewUrl, setEditPreviewUrl] = useState<string | null>(null);
+  const [isApplyingAI, setIsApplyingAI] = useState(false);
+  const [editCategory, setEditCategory] = useState<string>("");
+  const [isAnalyzingCategory, setIsAnalyzingCategory] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [aiAnalysis, setAiAnalysis] = useState<AIAnalysis | null>(null);
   const [showAIAnalysis, setShowAIAnalysis] = useState(false);
   const [showProjectMatches, setShowProjectMatches] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   // Simulated portfolio data with realistic images
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([
@@ -284,10 +294,90 @@ export default function TalentPortfolio() {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
+
+      // Create preview URL for the selected file
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
     }
   };
 
-  const handleUpload = () => {
+  const analyzeUploadCategory = () => {
+    if (!uploadDescription.trim()) {
+      toast({
+        title: "Error",
+        description: "Please add a description first to analyze the category",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Simple AI logic to determine category based on description keywords
+    const description = uploadDescription.toLowerCase();
+    let suggestedCategory = "Commercial";
+
+    if (
+      description.includes("editorial") ||
+      description.includes("vogue") ||
+      description.includes("fashion") ||
+      description.includes("magazine")
+    ) {
+      suggestedCategory = "Editorial";
+    } else if (
+      description.includes("beauty") ||
+      description.includes("makeup") ||
+      description.includes("cosmetics") ||
+      description.includes("skincare")
+    ) {
+      suggestedCategory = "Beauty";
+    } else if (
+      description.includes("lifestyle") ||
+      description.includes("wellness") ||
+      description.includes("fitness") ||
+      description.includes("health")
+    ) {
+      suggestedCategory = "Lifestyle";
+    } else if (
+      description.includes("artistic") ||
+      description.includes("creative") ||
+      description.includes("art") ||
+      description.includes("conceptual")
+    ) {
+      suggestedCategory = "Artistic";
+    } else if (
+      description.includes("behind") ||
+      description.includes("scenes") ||
+      description.includes("bts") ||
+      description.includes("backstage")
+    ) {
+      suggestedCategory = "Behind Scenes";
+    }
+
+    setUploadCategory(suggestedCategory);
+
+    toast({
+      title: "Category Analyzed!",
+      description: `AI suggests: ${suggestedCategory}`,
+    });
+  };
+
+  const simulateUpload = async () => {
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    // Simulate upload progress
+    for (let i = 0; i <= 100; i += 10) {
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      setUploadProgress(i);
+    }
+
+    // Simulate AI analysis
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    setIsUploading(false);
+    setUploadProgress(0);
+  };
+
+  const handleUpload = async () => {
     if (!selectedFile || !uploadDescription.trim()) {
       toast({
         title: "Error",
@@ -297,32 +387,198 @@ export default function TalentPortfolio() {
       return;
     }
 
+    // Create a unique ID for the new item
+    const newItemId = Date.now().toString();
+
+    // Create the new item immediately for better UX
     const newItem: MediaItem = {
-      id: Date.now().toString(),
+      id: newItemId,
       type: selectedFile.type.startsWith("video/") ? "video" : "photo",
-      url: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&h=800&fit=crop&crop=face",
+      url:
+        previewUrl ??
+        "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&h=800&fit=crop&crop=face", // Use the user's actual uploaded image
       description: uploadDescription,
       uploadDate: new Date().toISOString().split("T")[0],
-      category: "Commercial",
-      tags: ["new", "upload"],
+      category: uploadCategory,
+      tags: ["new", "upload", "fresh"],
       aiScore: Math.floor(Math.random() * 20) + 80,
       engagement: Math.floor(Math.random() * 30) + 70,
       views: Math.floor(Math.random() * 500) + 500,
     };
 
+    // Add item immediately to show it in the portfolio
     setMediaItems((prev) => [newItem, ...prev]);
+
+    // Start upload simulation
+    await simulateUpload();
+
+    // Keep the user's uploaded image - don't replace it with simulated images
+    // The previewUrl already contains the user's actual image
+    const finalImageUrl =
+      previewUrl ||
+      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&h=800&fit=crop&crop=face";
+
+    // Only update if we have a valid preview URL (user's actual image)
+    if (previewUrl) {
+      setMediaItems((prev) =>
+        prev.map((item) =>
+          item.id === newItemId ? { ...item, url: finalImageUrl } : item
+        )
+      );
+    }
+
+    // Clear form
     setSelectedFile(null);
     setUploadDescription("");
+    setUploadCategory("Commercial");
+    setPreviewUrl(null);
+
     toast({
       title: "Success",
-      description:
-        "Media uploaded successfully! AI analysis will be available shortly.",
+      description: "Media uploaded successfully! AI analysis completed.",
     });
+
+    // Show AI analysis automatically after upload
+    setTimeout(() => {
+      setAiAnalysis(simulatedAIAnalysis);
+      setShowAIAnalysis(true);
+    }, 500);
+
+    // Remove "fresh" tag after 5 seconds
+    setTimeout(() => {
+      setMediaItems((prev) =>
+        prev.map((item) =>
+          item.id === newItemId
+            ? { ...item, tags: item.tags.filter((tag) => tag !== "fresh") }
+            : item
+        )
+      );
+    }, 5000);
   };
 
   const handleEdit = (item: MediaItem) => {
-    setEditingItem(item);
+    // Ensure we're using the correct item data
+    const itemToEdit = {
+      ...item,
+      url: item.url, // Ensure the URL is preserved correctly
+    };
+
+    setEditingItem(itemToEdit);
     setEditDescription(item.description);
+    setEditCategory(item.category);
+    setEditImageFile(null);
+    setEditPreviewUrl(null);
+  };
+
+  const analyzeAndCategorize = async () => {
+    if (!editDescription.trim()) {
+      toast({
+        title: "Error",
+        description: "Please add a description first to analyze the category",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsAnalyzingCategory(true);
+
+    // Simulate AI analysis for categorization
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    // Simple AI logic to determine category based on description keywords
+    const description = editDescription.toLowerCase();
+    let suggestedCategory = "Commercial";
+
+    if (
+      description.includes("editorial") ||
+      description.includes("vogue") ||
+      description.includes("fashion") ||
+      description.includes("magazine")
+    ) {
+      suggestedCategory = "Editorial";
+    } else if (
+      description.includes("beauty") ||
+      description.includes("makeup") ||
+      description.includes("cosmetics") ||
+      description.includes("skincare")
+    ) {
+      suggestedCategory = "Beauty";
+    } else if (
+      description.includes("lifestyle") ||
+      description.includes("wellness") ||
+      description.includes("fitness") ||
+      description.includes("health")
+    ) {
+      suggestedCategory = "Lifestyle";
+    } else if (
+      description.includes("artistic") ||
+      description.includes("creative") ||
+      description.includes("art") ||
+      description.includes("conceptual")
+    ) {
+      suggestedCategory = "Artistic";
+    } else if (
+      description.includes("behind") ||
+      description.includes("scenes") ||
+      description.includes("bts") ||
+      description.includes("backstage")
+    ) {
+      suggestedCategory = "Behind Scenes";
+    }
+
+    setEditCategory(suggestedCategory);
+    setIsAnalyzingCategory(false);
+
+    toast({
+      title: "Category Analyzed!",
+      description: `AI suggests: ${suggestedCategory}`,
+    });
+  };
+
+  const handleEditImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setEditImageFile(file);
+      const url = URL.createObjectURL(file);
+      setEditPreviewUrl(url);
+    }
+  };
+
+  const applyAISuggestions = async () => {
+    if (!editingItem) return;
+
+    setIsApplyingAI(true);
+
+    // Simulate AI processing
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Keep the current image but improve the AI score and other metrics
+    setMediaItems((prev) =>
+      prev.map((item) =>
+        item.id === editingItem.id
+          ? {
+              ...item,
+              // Keep the current image URL (don't replace it)
+              url: editPreviewUrl || editingItem.url,
+              aiScore: Math.min(100, item.aiScore + 5),
+              description: editDescription || item.description,
+              category: editCategory || item.category,
+            }
+          : item
+      )
+    );
+
+    setIsApplyingAI(false);
+    setEditingItem(null);
+    setEditDescription("");
+    setEditCategory("");
+    setEditImageFile(null);
+    setEditPreviewUrl(null);
+
+    toast({
+      title: "AI Enhancements Applied!",
+      description: "Your content has been improved with AI suggestions.",
+    });
   };
 
   const handleSaveEdit = () => {
@@ -331,15 +587,23 @@ export default function TalentPortfolio() {
     setMediaItems((prev) =>
       prev.map((item) =>
         item.id === editingItem.id
-          ? { ...item, description: editDescription }
+          ? {
+              ...item,
+              description: editDescription,
+              category: editCategory,
+              url: editPreviewUrl || item.url, // Use new image if selected
+            }
           : item
       )
     );
     setEditingItem(null);
     setEditDescription("");
+    setEditCategory("");
+    setEditImageFile(null);
+    setEditPreviewUrl(null);
     toast({
       title: "Success",
-      description: "Description updated successfully!",
+      description: "Content updated successfully!",
     });
   };
 
@@ -388,6 +652,18 @@ export default function TalentPortfolio() {
         )
       : 0;
 
+  // Cleanup preview URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      if (editPreviewUrl) {
+        URL.revokeObjectURL(editPreviewUrl);
+      }
+    };
+  }, [previewUrl, editPreviewUrl]);
+
   return (
     <DashboardLayout>
       <div className="space-y-8">
@@ -418,7 +694,7 @@ export default function TalentPortfolio() {
                 size="lg"
                 variant="outline"
                 onClick={() => setShowProjectMatches(true)}
-                className="border-white text-white hover:bg-white/10"
+                className="border-white text-white hover:bg-white/10 bg-white/10"
               >
                 <Target className="h-5 w-5 mr-2" />
                 View Matches
@@ -527,15 +803,35 @@ export default function TalentPortfolio() {
                       className="hidden"
                     />
                     <label htmlFor="file" className="cursor-pointer">
-                      <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                      <p className="text-sm text-gray-600">
-                        {selectedFile
-                          ? `Selected: ${selectedFile.name}`
-                          : "Click to upload or drag and drop"}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        PNG, JPG, MP4 up to 10MB
-                      </p>
+                      {previewUrl ? (
+                        <div className="space-y-4">
+                          <div className="relative w-32 h-32 mx-auto rounded-lg overflow-hidden">
+                            <img
+                              src={previewUrl}
+                              alt="Preview"
+                              className="w-full h-full object-cover"
+                            />
+                            {selectedFile?.type.startsWith("video/") && (
+                              <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                                <Play className="h-8 w-8 text-white" />
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600">
+                            {selectedFile?.name}
+                          </p>
+                        </div>
+                      ) : (
+                        <>
+                          <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                          <p className="text-sm text-gray-600">
+                            Click to upload or drag and drop
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            PNG, JPG, MP4 up to 10MB
+                          </p>
+                        </>
+                      )}
                     </label>
                   </div>
                 </div>
@@ -557,6 +853,44 @@ export default function TalentPortfolio() {
                     {uploadDescription.length}/200 characters
                   </p>
                 </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label
+                      htmlFor="uploadCategory"
+                      className="text-sm font-medium"
+                    >
+                      Category
+                    </Label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={analyzeUploadCategory}
+                      disabled={!uploadDescription.trim()}
+                      className="text-xs"
+                    >
+                      <Brain className="h-3 w-3 mr-1" />
+                      AI Suggest
+                    </Button>
+                  </div>
+                  <select
+                    id="uploadCategory"
+                    value={uploadCategory}
+                    onChange={(e) => setUploadCategory(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="Commercial">Commercial</option>
+                    <option value="Editorial">Editorial</option>
+                    <option value="Beauty">Beauty</option>
+                    <option value="Lifestyle">Lifestyle</option>
+                    <option value="Artistic">Artistic</option>
+                    <option value="Behind Scenes">Behind Scenes</option>
+                  </select>
+                  <p className="text-xs text-muted-foreground">
+                    Let AI suggest the best category based on your description
+                  </p>
+                </div>
               </div>
 
               <div className="space-y-4">
@@ -572,14 +906,40 @@ export default function TalentPortfolio() {
                   </ul>
                 </div>
 
+                {isUploading && (
+                  <div className="p-4 bg-green-50 dark:bg-green-950/20 rounded-lg">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Loader2 className="h-4 w-4 animate-spin text-green-600" />
+                      <span className="text-sm font-medium text-green-900 dark:text-green-100">
+                        Uploading & Analyzing...
+                      </span>
+                    </div>
+                    <Progress value={uploadProgress} className="h-2" />
+                    <p className="text-xs text-green-700 dark:text-green-300 mt-1">
+                      {uploadProgress}% complete
+                    </p>
+                  </div>
+                )}
+
                 <Button
                   onClick={handleUpload}
-                  disabled={!selectedFile || !uploadDescription.trim()}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                  disabled={
+                    !selectedFile || !uploadDescription.trim() || isUploading
+                  }
+                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50"
                   size="lg"
                 >
-                  <Sparkles className="h-5 w-5 mr-2" />
-                  Upload & Analyze
+                  {isUploading ? (
+                    <>
+                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-5 w-5 mr-2" />
+                      Upload & Analyze
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
@@ -650,13 +1010,22 @@ export default function TalentPortfolio() {
                 {filteredMediaItems.map((item) => (
                   <div
                     key={item.id}
-                    className="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                    className={`group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 ${
+                      item.tags.includes("fresh")
+                        ? "ring-2 ring-green-500 animate-pulse"
+                        : ""
+                    }`}
                   >
                     <div className="aspect-square relative overflow-hidden">
                       <img
                         src={item.url}
                         alt={item.description}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        onError={(e) => {
+                          // Fallback image if the original fails to load
+                          e.currentTarget.src =
+                            "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&h=800&fit=crop&crop=face";
+                        }}
                       />
                       {item.type === "video" && (
                         <div className="absolute inset-0 flex items-center justify-center">
@@ -678,6 +1047,14 @@ export default function TalentPortfolio() {
                           {item.aiScore}/100
                         </Badge>
                       </div>
+                      {item.tags.includes("fresh") && (
+                        <div className="absolute top-3 left-3">
+                          <Badge className="bg-green-500 text-white animate-bounce">
+                            <Sparkles className="h-3 w-3 mr-1" />
+                            NEW
+                          </Badge>
+                        </div>
+                      )}
                       <div className="absolute bottom-3 left-3 right-3">
                         <div className="bg-black/70 backdrop-blur-sm rounded-lg p-3 text-white">
                           <div className="flex items-center justify-between text-sm mb-2">
@@ -751,6 +1128,10 @@ export default function TalentPortfolio() {
                         src={item.url}
                         alt={item.description}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&h=800&fit=crop&crop=face";
+                        }}
                       />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -1019,11 +1400,106 @@ export default function TalentPortfolio() {
 
         {/* Edit Dialog */}
         <Dialog open={!!editingItem} onOpenChange={() => setEditingItem(null)}>
-          <DialogContent>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Edit Content</DialogTitle>
+              <DialogTitle className="flex items-center">
+                <Edit className="mr-2 h-5 w-5" />
+                Edit Content
+              </DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
+            <div className="space-y-6">
+              {/* Current Image Preview */}
+              <div className="space-y-2">
+                <Label>Current Image</Label>
+                <div className="relative w-32 h-32 rounded-lg overflow-hidden border-2 border-gray-200">
+                  {editingItem?.url ? (
+                    <img
+                      src={editingItem.url}
+                      alt="Current"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        // Try to use a fallback based on the item's category or type
+                        const fallbackImages = {
+                          Editorial:
+                            "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&h=800&fit=crop&crop=face",
+                          Beauty:
+                            "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=800&h=800&fit=crop&crop=face",
+                          Lifestyle:
+                            "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&h=800&fit=crop&crop=face",
+                          Artistic:
+                            "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=800&h=800&fit=crop&crop=face",
+                          "Behind Scenes":
+                            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&h=800&fit=crop&crop=face",
+                          Commercial:
+                            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=800&fit=crop&crop=face",
+                        };
+                        const fallback =
+                          fallbackImages[
+                            editingItem?.category as keyof typeof fallbackImages
+                          ] || fallbackImages.Commercial;
+                        e.currentTarget.src = fallback;
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                      <ImageIcon className="h-8 w-8 text-gray-400" />
+                    </div>
+                  )}
+                  {editingItem?.type === "video" && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                      <Play className="h-6 w-6 text-white" />
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {editingItem?.category} • {editingItem?.type}
+                </p>
+                <p className="text-xs text-gray-500 truncate">
+                  ID: {editingItem?.id}
+                </p>
+              </div>
+
+              {/* New Image Upload */}
+              <div className="space-y-2">
+                <Label htmlFor="editImage">Replace Image (Optional)</Label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-500 transition-colors">
+                  <Input
+                    id="editImage"
+                    type="file"
+                    accept="image/*,video/*"
+                    onChange={handleEditImageSelect}
+                    className="hidden"
+                  />
+                  <Label htmlFor="editImage" className="cursor-pointer">
+                    {editPreviewUrl ? (
+                      <div className="space-y-2">
+                        <div className="relative w-32 h-32 mx-auto rounded-lg overflow-hidden">
+                          <img
+                            src={editPreviewUrl}
+                            alt="Preview"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          {editImageFile?.name}
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <Upload className="h-8 w-8 mx-auto text-gray-400 mb-2" />
+                        <p className="text-sm text-gray-600">
+                          Click to upload new image or video
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          PNG, JPG, MP4 up to 10MB
+                        </p>
+                      </>
+                    )}
+                  </Label>
+                </div>
+              </div>
+
+              {/* Description */}
               <div className="space-y-2">
                 <Label htmlFor="editDescription">Description</Label>
                 <Textarea
@@ -1037,11 +1513,100 @@ export default function TalentPortfolio() {
                   {editDescription.length}/200 characters
                 </p>
               </div>
-              <div className="flex justify-end space-x-2">
+
+              {/* Category Selection */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="editCategory">Category</Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={analyzeAndCategorize}
+                    disabled={!editDescription.trim() || isAnalyzingCategory}
+                    className="text-xs"
+                  >
+                    {isAnalyzingCategory ? (
+                      <>
+                        <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                        Analyzing...
+                      </>
+                    ) : (
+                      <>
+                        <Brain className="h-3 w-3 mr-1" />
+                        AI Suggest
+                      </>
+                    )}
+                  </Button>
+                </div>
+                <select
+                  id="editCategory"
+                  value={editCategory}
+                  onChange={(e) => setEditCategory(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="Commercial">Commercial</option>
+                  <option value="Editorial">Editorial</option>
+                  <option value="Beauty">Beauty</option>
+                  <option value="Lifestyle">Lifestyle</option>
+                  <option value="Artistic">Artistic</option>
+                  <option value="Behind Scenes">Behind Scenes</option>
+                </select>
+                <p className="text-xs text-muted-foreground">
+                  Let AI suggest the best category based on your description
+                </p>
+              </div>
+
+              {/* AI Suggestions Section */}
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <Sparkles className="h-4 w-4 text-blue-500" />
+                  <Label className="text-sm font-medium">
+                    AI Enhancement Options
+                  </Label>
+                </div>
+                <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                  <p className="text-sm text-blue-800 dark:text-blue-200 mb-3">
+                    Apply AI suggestions to improve your content quality and
+                    engagement:
+                  </p>
+                  <ul className="text-xs text-blue-700 dark:text-blue-300 space-y-1">
+                    <li>• Enhanced lighting and composition</li>
+                    <li>• Optimized color grading</li>
+                    <li>• Improved background processing</li>
+                    <li>• Better visual appeal for target audience</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end space-x-3">
                 <Button variant="outline" onClick={() => setEditingItem(null)}>
                   Cancel
                 </Button>
-                <Button onClick={handleSaveEdit}>Save Changes</Button>
+                <Button
+                  onClick={handleSaveEdit}
+                  disabled={!editDescription.trim()}
+                >
+                  Save Changes
+                </Button>
+                <Button
+                  onClick={applyAISuggestions}
+                  disabled={isApplyingAI}
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                >
+                  {isApplyingAI ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Applying AI...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Apply AI Enhancements
+                    </>
+                  )}
+                </Button>
               </div>
             </div>
           </DialogContent>
