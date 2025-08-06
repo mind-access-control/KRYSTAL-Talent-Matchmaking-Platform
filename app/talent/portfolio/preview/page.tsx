@@ -214,6 +214,73 @@ export default function PortfolioPreview() {
         "Ideal for beauty and lifestyle brands",
       ],
     },
+    workHistory: [
+      {
+        id: "1",
+        company: "Chanel",
+        project: "Spring/Summer Campaign 2024",
+        type: "Fashion Campaign",
+        date: "2024-01-15",
+        rating: 5.0,
+        review:
+          "Sofia was absolutely professional and brought our vision to life perfectly. Her experience with luxury brands was evident throughout the entire shoot.",
+        matchScore: 98,
+        budget: "$25,000",
+        status: "completed",
+      },
+      {
+        id: "2",
+        company: "Vogue Magazine",
+        project: "Editorial Feature - 'The New Face of Fashion'",
+        type: "Editorial",
+        date: "2023-11-20",
+        rating: 5.0,
+        review:
+          "Exceptional editorial work. Sofia's versatility and professionalism made this one of our best shoots of the year.",
+        matchScore: 96,
+        budget: "$18,000",
+        status: "completed",
+      },
+      {
+        id: "3",
+        company: "MAC Cosmetics",
+        project: "Beauty Campaign - 'Natural Glow'",
+        type: "Beauty",
+        date: "2023-09-10",
+        rating: 4.9,
+        review:
+          "Sofia's natural beauty and makeup skills were perfect for our campaign. Highly recommend for beauty projects.",
+        matchScore: 94,
+        budget: "$15,000",
+        status: "completed",
+      },
+      {
+        id: "4",
+        company: "Lululemon",
+        project: "Lifestyle Campaign - 'Active Living'",
+        type: "Lifestyle",
+        date: "2023-07-05",
+        rating: 4.8,
+        review:
+          "Great energy and authenticity. Sofia perfectly captured our brand's active lifestyle message.",
+        matchScore: 92,
+        budget: "$12,000",
+        status: "completed",
+      },
+      {
+        id: "5",
+        company: "Gucci",
+        project: "Fall Collection Preview",
+        type: "Fashion Campaign",
+        date: "2023-05-15",
+        rating: 5.0,
+        review:
+          "Outstanding work with our luxury aesthetic. Sofia's professionalism and creativity exceeded expectations.",
+        matchScore: 97,
+        budget: "$30,000",
+        status: "completed",
+      },
+    ],
   };
 
   const portfolioUrl = `https://krystal.talent/portfolio/${talent.name
@@ -323,6 +390,10 @@ export default function PortfolioPreview() {
     );
   };
 
+  const goToImage = (index: number) => {
+    setCurrentImageIndex(index);
+  };
+
   const currentImage = talent.portfolio[currentImageIndex];
 
   return (
@@ -384,27 +455,55 @@ export default function PortfolioPreview() {
             <img
               src={currentImage.url}
               alt={currentImage.description}
-              className="w-full h-full object-cover opacity-40"
+              className="w-full h-full object-cover opacity-70"
+              onError={(e) => {
+                const fallbackImages = {
+                  Editorial:
+                    "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=1200&h=1600&fit=crop&crop=face",
+                  Commercial:
+                    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=1600&fit=crop&crop=face",
+                  "Behind Scenes":
+                    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1200&h=1600&fit=crop&crop=face",
+                  Beauty:
+                    "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=1200&h=1600&fit=crop&crop=face",
+                  Lifestyle:
+                    "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=1200&h=1600&fit=crop&crop=face",
+                  Artistic:
+                    "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=1200&h=1600&fit=crop&crop=face",
+                };
+                const fallback =
+                  fallbackImages[
+                    currentImage.category as keyof typeof fallbackImages
+                  ] || fallbackImages.Editorial;
+                e.currentTarget.src = fallback;
+              }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
           </div>
 
           {/* Navigation Arrows */}
           <button
+            type="button"
             onClick={prevImage}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 z-10"
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 z-20 cursor-pointer"
+            style={{ pointerEvents: "auto" }}
           >
             <ChevronLeft className="h-6 w-6" />
           </button>
           <button
+            type="button"
             onClick={nextImage}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 z-10"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 z-20 cursor-pointer"
+            style={{ pointerEvents: "auto" }}
           >
             <ChevronRight className="h-6 w-6" />
           </button>
 
           {/* Main Content */}
-          <div className="relative z-10 h-full flex items-end p-8">
+          <div
+            className="relative z-10 h-full flex items-end p-8"
+            style={{ pointerEvents: "none" }}
+          >
             <div className="flex items-end space-x-8 w-full">
               {/* Model Info */}
               <div className="flex-1 text-white">
@@ -459,7 +558,10 @@ export default function PortfolioPreview() {
                     <div className="font-semibold">${talent.rates}/day</div>
                   </div>
                 </div>
-                <div className="flex items-center space-x-4">
+                <div
+                  className="flex items-center space-x-4"
+                  style={{ pointerEvents: "auto" }}
+                >
                   <Button
                     size="lg"
                     onClick={handleContactTalent}
@@ -471,7 +573,7 @@ export default function PortfolioPreview() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-white text-white hover:bg-white/10"
+                    className="border-white text-white hover:bg-white/20 hover:text-white bg-white/10 font-semibold"
                   >
                     <Download className="h-5 w-5 mr-2" />
                     Download Portfolio
@@ -480,7 +582,10 @@ export default function PortfolioPreview() {
               </div>
 
               {/* Current Image Info */}
-              <div className="text-white text-right max-w-md">
+              <div
+                className="text-white text-right max-w-md"
+                style={{ pointerEvents: "auto" }}
+              >
                 <div className="bg-black/50 backdrop-blur-sm rounded-lg p-4 mb-4">
                   <h3 className="font-semibold mb-2">
                     {currentImage.category}
@@ -531,7 +636,7 @@ export default function PortfolioPreview() {
           {talent.portfolio.map((item, index) => (
             <button
               key={item.id}
-              onClick={() => setCurrentImageIndex(index)}
+              onClick={() => goToImage(index)}
               className={`flex-shrink-0 w-32 h-48 rounded-lg overflow-hidden transition-all duration-300 ${
                 index === currentImageIndex
                   ? "ring-4 ring-blue-500 scale-105"
@@ -542,6 +647,10 @@ export default function PortfolioPreview() {
                 src={item.url}
                 alt={item.description}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src =
+                    "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&h=800&fit=crop&crop=face";
+                }}
               />
             </button>
           ))}
@@ -825,6 +934,145 @@ export default function PortfolioPreview() {
           </div>
         </div>
 
+        {/* Work History Section */}
+        <Card className="border-0 shadow-xl">
+          <CardContent className="p-8">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-3 bg-green-500 rounded-full">
+                <Briefcase className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold">Work History & Reviews</h2>
+                <p className="text-muted-foreground">
+                  Recent collaborations and client feedback
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {talent.workHistory.map((work) => (
+                <div
+                  key={work.id}
+                  className="border rounded-xl p-6 hover:shadow-lg transition-shadow"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <h3 className="text-xl font-semibold">
+                          {work.company}
+                        </h3>
+                        <Badge
+                          className={`${
+                            work.type === "Fashion Campaign"
+                              ? "bg-purple-500"
+                              : work.type === "Editorial"
+                              ? "bg-blue-500"
+                              : work.type === "Beauty"
+                              ? "bg-pink-500"
+                              : "bg-green-500"
+                          } text-white`}
+                        >
+                          {work.type}
+                        </Badge>
+                        <Badge
+                          variant="outline"
+                          className="text-green-600 border-green-600"
+                        >
+                          {work.matchScore}% Match
+                        </Badge>
+                      </div>
+                      <p className="text-lg font-medium text-muted-foreground mb-1">
+                        {work.project}
+                      </p>
+                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                        <span className="flex items-center">
+                          <Calendar className="h-4 w-4 mr-1" />
+                          {new Date(work.date).toLocaleDateString()}
+                        </span>
+                        <span className="flex items-center">
+                          <DollarSign className="h-4 w-4 mr-1" />
+                          {work.budget}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="flex items-center mb-2">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-5 w-5 ${
+                              i < Math.floor(work.rating)
+                                ? "text-yellow-500 fill-current"
+                                : "text-gray-300"
+                            }`}
+                          />
+                        ))}
+                        <span className="ml-2 font-semibold">
+                          {work.rating}
+                        </span>
+                      </div>
+                      <Badge className="bg-green-500 text-white">
+                        Completed
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                    <p className="text-sm italic text-muted-foreground">
+                      "{work.review}"
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 rounded-xl">
+              <div className="text-center">
+                <h3 className="text-xl font-semibold mb-2">
+                  Client Satisfaction
+                </h3>
+                <div className="flex items-center justify-center space-x-8">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-green-600">
+                      {(
+                        talent.workHistory.reduce(
+                          (acc, work) => acc + work.rating,
+                          0
+                        ) / talent.workHistory.length
+                      ).toFixed(1)}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Average Rating
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-blue-600">
+                      {talent.workHistory.length}
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Projects Completed
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-purple-600">
+                      {Math.round(
+                        talent.workHistory.reduce(
+                          (acc, work) => acc + work.matchScore,
+                          0
+                        ) / talent.workHistory.length
+                      )}
+                      %
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Average Match Score
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Contact CTA */}
         <Card className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 shadow-xl">
           <CardContent className="p-8 text-center">
@@ -845,7 +1093,7 @@ export default function PortfolioPreview() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-white text-white hover:bg-white/10"
+                className="border-white text-white hover:bg-white/20 hover:text-white bg-white/10 font-semibold"
               >
                 <Phone className="h-5 w-5 mr-2" />
                 Call Now
@@ -853,7 +1101,7 @@ export default function PortfolioPreview() {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-white text-white hover:bg-white/10"
+                className="border-white text-white hover:bg-white/20 hover:text-white bg-white/10 font-semibold"
               >
                 <Mail className="h-5 w-5 mr-2" />
                 Email
@@ -865,11 +1113,37 @@ export default function PortfolioPreview() {
         {/* Fullscreen Image Modal */}
         <Dialog open={showFullscreen} onOpenChange={setShowFullscreen}>
           <DialogContent className="max-w-7xl max-h-[90vh] p-0">
+            <DialogHeader>
+              <DialogTitle className="sr-only">
+                Fullscreen Image View
+              </DialogTitle>
+            </DialogHeader>
             <div className="relative">
               <img
                 src={currentImage.url}
                 alt={currentImage.description}
                 className="w-full h-full object-contain"
+                onError={(e) => {
+                  const fallbackImages = {
+                    Editorial:
+                      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=1200&h=1600&fit=crop&crop=face",
+                    Commercial:
+                      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=1600&fit=crop&crop=face",
+                    "Behind Scenes":
+                      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1200&h=1600&fit=crop&crop=face",
+                    Beauty:
+                      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=1200&h=1600&fit=crop&crop=face",
+                    Lifestyle:
+                      "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=1200&h=1600&fit=crop&crop=face",
+                    Artistic:
+                      "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=1200&h=1600&fit=crop&crop=face",
+                  };
+                  const fallback =
+                    fallbackImages[
+                      currentImage.category as keyof typeof fallbackImages
+                    ] || fallbackImages.Editorial;
+                  e.currentTarget.src = fallback;
+                }}
               />
               <div className="absolute top-4 right-4 flex space-x-2">
                 <Button
