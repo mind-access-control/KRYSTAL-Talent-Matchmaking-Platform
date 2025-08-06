@@ -1,6 +1,15 @@
 "use client";
 import Link from "next/link";
-import { ArrowRight, Zap, Users, Target, CheckCircle } from "lucide-react";
+import {
+  ArrowRight,
+  Zap,
+  Users,
+  Target,
+  CheckCircle,
+  Sparkles,
+  Brain,
+  Globe,
+} from "lucide-react";
 import { Header } from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,15 +53,36 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative py-20 px-4 bg-gradient-to-br from-purple-50 via-white to-pink-50 dark:from-purple-950/20 dark:via-background dark:to-pink-950/20">
         <div className="container mx-auto text-center">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              {t("hero.title")}
+          <div className="max-w-5xl mx-auto">
+            {/* Main Headline */}
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-8">
+              <span className="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                Discover Your Next Star.
+              </span>
+              <br />
+              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Unleash Your Potential.
+              </span>
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              {t("hero.subtitle")}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild className="text-lg px-8">
+
+            {/* AI-Powered Platform Highlight */}
+            <div className="relative mb-8">
+              <div className="inline-flex items-center space-x-3 px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-white shadow-2xl transform hover:scale-105 transition-transform duration-300">
+                <Brain className="h-6 w-6" />
+                <span className="text-xl md:text-2xl font-semibold">
+                  AI-powered talent matchmaking platform
+                </span>
+                <Sparkles className="h-6 w-6" />
+              </div>
+            </div>
+
+            {/* Call to Action */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              <Button
+                size="lg"
+                asChild
+                className="text-lg px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
+              >
                 <Link href="/register">
                   {t("hero.cta")}
                   <ArrowRight className="ml-2 h-5 w-5" />
@@ -62,10 +92,26 @@ export default function LandingPage() {
                 size="lg"
                 variant="outline"
                 asChild
-                className="text-lg px-8 bg-transparent"
+                className="text-lg px-8 py-4 border-2 border-gray-300 hover:border-purple-500 hover:bg-purple-50"
               >
                 <Link href="/login">{t("nav.login")}</Link>
               </Button>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="flex items-center justify-center space-x-8 text-sm text-gray-600">
+              <div className="flex items-center space-x-2">
+                <Globe className="h-4 w-4" />
+                <span>Global Network</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="h-4 w-4 text-green-500" />
+                <span>Verified Talent</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Sparkles className="h-4 w-4 text-purple-500" />
+                <span>AI-Powered</span>
+              </div>
             </div>
           </div>
         </div>
@@ -95,9 +141,8 @@ export default function LandingPage() {
               Revolutionizing Talent Discovery
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Our AI-powered platform connects creative professionals with
-              businesses, making talent discovery more efficient and effective
-              than ever before.
+              Our AI-powered platform makes talent discovery more efficient and
+              effective than ever before.
             </p>
           </div>
 
@@ -105,7 +150,7 @@ export default function LandingPage() {
             {features.map((feature, index) => (
               <Card
                 key={index}
-                className="text-center hover:shadow-lg transition-shadow"
+                className="text-center hover:shadow-lg transition-shadow border-0 shadow-md"
               >
                 <CardHeader>
                   <div className="mx-auto mb-4">{feature.icon}</div>
